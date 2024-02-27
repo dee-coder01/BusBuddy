@@ -1,6 +1,7 @@
 package com.travellers_apis.nomadic_bus.services;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,6 +75,26 @@ public class BusService {
             return existingBus;
         } else
             throw new BusException("Bus not found with busId: " + busId);
+    }
+
+    public List<Bus> getAllBus() {
+        return busRepo.findAll();
+    }
+
+    public Bus getBusInfo(Integer busId) throws BusException {
+        Optional<Bus> busInfo = busRepo.findById(busId);
+        if (busInfo.isPresent())
+            return busInfo.get();
+        else
+            throw new BusException("Bus not found with busId: " + busId);
+    }
+
+    public List<Bus> findAllBusByBusType(String busType) throws BusException {
+        List<Bus> busListType = busRepo.findByBusType(busType);
+        if (busListType.isEmpty()) {
+            throw new BusException("There are no buses with bus type: " + busType);
+        }
+        return busListType;
     }
 
 }
