@@ -7,5 +7,5 @@ import com.travellers_apis.nomadic_bus.models.Route;
 
 @Repository
 public interface RouteRepository extends JpaRepository<Route, Integer> {
-
+    public Route findByRouteFromAndRouteTo(String routeFrom, String routeTo);
 }
