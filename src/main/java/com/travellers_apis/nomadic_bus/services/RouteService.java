@@ -8,6 +8,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.travellers_apis.nomadic_bus.controllers.RouteException;
 import com.travellers_apis.nomadic_bus.models.Route;
 import com.travellers_apis.nomadic_bus.repositories.RouteRepository;
 
@@ -67,5 +68,15 @@ public class RouteService {
             graph.put(route.getRouteTo(), routeList);
         }
         return graph;
+    }
+
+    public Route getRouteFromSourceToDestination(String source, String destination) {
+        return routeRepository.findByRouteFromAndRouteTo(source, destination);
+    }
+
+    public Route addNewRoute(Route route) throws RouteException {
+        if (route == null)
+            throw new RouteException("Route Can't be a null value");
+        return routeRepository.save(route);
     }
 }

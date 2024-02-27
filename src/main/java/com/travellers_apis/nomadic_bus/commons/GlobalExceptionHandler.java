@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 
+import com.travellers_apis.nomadic_bus.controllers.RouteException;
 import com.travellers_apis.nomadic_bus.models.CustomErrorDetails;
 
 @ControllerAdvice
@@ -43,6 +44,16 @@ public class GlobalExceptionHandler {
     @ResponseBody
     public CustomErrorDetails busExceptionHandler(BusException ex, WebRequest wb) {
         CustomErrorDetails error = CustomErrorDetails.builder().time(LocalDateTime.now()).message("Wrong bus details")
+                .details(wb.getDescription(false)).build();
+        return error;
+    }
+
+    @ExceptionHandler(RouteException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public CustomErrorDetails routeExceptionHandler(RouteException ex, WebRequest wb) {
+        CustomErrorDetails error = CustomErrorDetails.builder().time(LocalDateTime.now())
+                .message("Wrong route details.")
                 .details(wb.getDescription(false)).build();
         return error;
     }
