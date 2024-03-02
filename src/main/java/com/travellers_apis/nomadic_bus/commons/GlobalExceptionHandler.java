@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 
-import com.travellers_apis.nomadic_bus.controllers.RouteException;
 import com.travellers_apis.nomadic_bus.models.CustomErrorDetails;
 
 @ControllerAdvice
