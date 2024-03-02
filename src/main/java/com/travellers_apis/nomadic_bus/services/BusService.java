@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.travellers_apis.nomadic_bus.commons.AdminException;
 import com.travellers_apis.nomadic_bus.commons.BusException;
-import com.travellers_apis.nomadic_bus.controllers.RouteException;
+import com.travellers_apis.nomadic_bus.commons.RouteException;
 import com.travellers_apis.nomadic_bus.models.Bus;
 import com.travellers_apis.nomadic_bus.models.Route;
 import com.travellers_apis.nomadic_bus.models.UserSession;
@@ -51,11 +51,11 @@ public class BusService {
         Route route = routeService.getRouteFromSourceToDestination(bus.getRouteFrom(), bus.getRouteTo());
         if (route == null) {
             Route route1 = new Route(bus.getRouteFrom(), bus.getRouteTo(), bus.getRoute().getDistance());
-            routeService.addNewRoute(route);
+            routeService.addRoute(route, userKey);
             bus.setRoute(route1);
             return busRepo.save(bus);
         }
-        routeService.addNewRoute(route);
+        routeService.addRoute(route, userKey);
         bus.setRoute(route);
         return busRepo.save(bus);
     }
