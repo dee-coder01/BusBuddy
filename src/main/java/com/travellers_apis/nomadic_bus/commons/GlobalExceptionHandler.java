@@ -46,4 +46,14 @@ public class GlobalExceptionHandler {
                 .details(wb.getDescription(false)).build();
         return error;
     }
+
+    @ExceptionHandler(RouteException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public CustomErrorDetails routeExceptionHandler(RouteException ex, WebRequest wb) {
+        CustomErrorDetails error = CustomErrorDetails.builder().time(LocalDateTime.now())
+                .message("Wrong route details.")
+                .details(wb.getDescription(false)).build();
+        return error;
+    }
 }
