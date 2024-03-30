@@ -33,9 +33,9 @@ public class RouteController {
         return new ResponseEntity<Route>(newRoute, HttpStatus.ACCEPTED);
     }
 
-    @GetMapping("")
-    public List<List<Route>> getMethodName() {
-        return routeService.getAllRouteFromSourceToDestination("Ayodhya", "Lucknow");
+    @GetMapping("/all")
+    public List<List<Route>> getAllRoute(@RequestParam String source, @RequestParam String destination) {
+        return routeService.getAllRouteFromSourceToDestination(source, destination);
     }
 
 }
