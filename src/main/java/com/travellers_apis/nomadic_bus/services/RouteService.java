@@ -79,6 +79,31 @@ public class RouteService {
         return graph;
     }
 
+    public List<List<Route>> getAllRouteFromSourceToDestination(String source, String destination) {
+        Map<String, List<Route>> routeGraph = getRouteGraph();
+        List<List<Route>> routes = new ArrayList<>();
+        Map<String, Boolean> visited = new HashMap<>();
+        routeFinder(routeGraph, source, destination, routes, visited, new ArrayList<>());
+        return routes;
+    }
+
+    private void routeFinder(Map<String, List<Route>> routeGraph, String source, String destination,
+            List<List<Route>> routes, Map<String, Boolean> visited, List<Route> routeSoFar) {
+        if (source.equals(destination)) {
+            routes.add(List.copyOf(routeSoFar));
+            routeSoFar = new ArrayList<>();
+        }
+        visited.put(source, true);
+        for (Route route : routeGraph.get(source)) {
+            if (visited.get(route.getRouteTo()) != null && visited.get(route.getRouteTo()))
+                continue;
+            routeSoFar.add(route);
+            routeFinder(routeGraph, route.getRouteTo(), destination, routes, visited, routeSoFar);
+            routeSoFar.remove(route);
+        }
+        visited.put(source, false);
+    }
+
     public Route getRouteFromSourceToDestination(String source, String destination) {
         return routeRepository.findByRouteFromAndRouteTo(source, destination);
     }

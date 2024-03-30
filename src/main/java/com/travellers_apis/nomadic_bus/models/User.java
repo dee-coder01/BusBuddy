@@ -23,7 +23,7 @@ import lombok.Data;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer userID;
+    private String userID;
 
     @NotNull(message = "Name cannot be null!")
     @NotBlank(message = "Name cannot be blank!")
