@@ -29,8 +29,8 @@ public class ReservationDTO {
     @NotBlank(message = "Destination should not be blanked")
     private String destination;
 
-    @NotNull(message = "Bus id required to book a reservation")
-    @NotBlank(message = "Bus id should not be blanked")
+    // @NotNull(message = "Bus id required to book a reservation")
+    // @NotBlank(message = "Bus id should not be blanked")
     private Integer busId;
 
     @NotNull
