@@ -2,9 +2,13 @@ package com.travellers_apis.nomadic_bus.services;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Queue;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -102,6 +106,26 @@ public class RouteService {
             routeSoFar.remove(route);
         }
         visited.put(source, false);
+    }
+
+    public void bfs(String source, String destination) {
+        Map<String, List<Route>> routeGraph = getRouteGraph();
+        Set<String> visited = new HashSet<>();
+        Queue<String> q = new LinkedList<>();
+        q.add(source);
+        while (q.size() > 0) {
+            String src = q.remove();
+            if (visited.contains(src))
+                continue;
+            visited.add(src);
+            System.out.println(visited);
+            for (Route route : routeGraph.get(src)) {
+                if (!visited.contains(route.getRouteTo())) {
+                    q.add(route.getRouteTo());
+                    System.out.println(route.getRouteTo());
+                }
+            }
+        }
     }
 
     public Route getRouteFromSourceToDestination(String source, String destination) {
