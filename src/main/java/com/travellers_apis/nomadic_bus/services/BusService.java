@@ -28,7 +28,7 @@ public class BusService {
     private RouteService routeService;
 
     public Bus addNewBusToDB(Bus bus, String userKey) throws AdminException, BusException {
-        UserSession currentSession = userLoginRepo.findByUserID(userKey);
+        UserSession currentSession = userLoginRepo.findByUuid(userKey);
         if (currentSession == null)
             throw new AdminException("user key is not valid, Please provide a valid key.");
         if (bus.getRouteFrom().equals(bus.getRouteTo()))
@@ -41,7 +41,7 @@ public class BusService {
     }
 
     public Bus updateBusInfo(@Valid Bus bus, String userKey) throws AdminException, BusException, RouteException {
-        UserSession currentSession = userLoginRepo.findByUserID(userKey);
+        UserSession currentSession = userLoginRepo.findByUuid(userKey);
         if (currentSession == null)
             throw new AdminException("user key is not valid, Please provide a valid key.");
         if (bus.getBusId() == null)
@@ -61,7 +61,7 @@ public class BusService {
     }
 
     public Bus deleteBusInfo(@Valid Integer busId, String userKey) throws AdminException, BusException {
-        UserSession currentSession = userLoginRepo.findByUserID(userKey);
+        UserSession currentSession = userLoginRepo.findByUuid(userKey);
         if (currentSession == null)
             throw new AdminException("user key is not valid, Please provide a valid key.");
         Optional<Bus> bus = busRepo.findById(busId);
