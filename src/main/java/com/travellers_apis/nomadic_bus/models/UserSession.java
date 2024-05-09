@@ -12,7 +12,7 @@ import lombok.Data;
 public class UserSession {
     @Id
     @Column(unique = true)
-    private String userID;
+    private Long userID;
     private String uuid;
     private LocalDateTime time;
 }

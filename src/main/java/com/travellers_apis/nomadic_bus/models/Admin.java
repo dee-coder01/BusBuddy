@@ -16,8 +16,8 @@ import lombok.Data;
 @Data
 public class Admin {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     @Email
     @NotNull(message = "Email can't be null.")
     @Column(unique = true)

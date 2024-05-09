@@ -15,7 +15,9 @@ import com.travellers_apis.nomadic_bus.dtos.ReservationResponseDTO;
 import com.travellers_apis.nomadic_bus.models.Bus;
 import com.travellers_apis.nomadic_bus.models.Reservation;
 import com.travellers_apis.nomadic_bus.models.User;
+import com.travellers_apis.nomadic_bus.models.UserSession;
 import com.travellers_apis.nomadic_bus.repositories.ReservationRepo;
+import com.travellers_apis.nomadic_bus.repositories.UserLoginRepo;
 import com.travellers_apis.nomadic_bus.repositories.UserRepo;
 
 @Service
@@ -28,10 +30,13 @@ public class ReservationService {
     private BusService busService;
     @Autowired
     UserRepo userRepo;
+    @Autowired
+    UserLoginRepo loginRepo;
 
     public ReservationResponseDTO addReservation(ReservationDTO dto, String userKey)
             throws UserLoginException, RouteException, BusException, ReservationException {
-        User user = userRepo.findByUserID(userKey);
+        UserSession userSession = loginRepo.findByUuid(userKey);
+        User user = userRepo.findByUserID(userSession.getUserID());
         if (user == null)
             throw new UserLoginException("User key: " + userKey + " is invalid. Please provide a valid user key.");
         if (!routeService.isRouteAvailable(dto.getSource(), dto.getDestination()))
@@ -50,7 +55,8 @@ public class ReservationService {
 
     public ReservationResponseDTO cancelReservation(ReservationDTO dto, String userKey)
             throws UserLoginException, BusException {
-        User user = userRepo.findByUserID(userKey);
+        UserSession userSession = loginRepo.findByUuid(userKey);
+        User user = userRepo.findByUserID(userSession.getUserID());
         if (user == null)
             throw new UserLoginException("User key: " + userKey + " is invalid. Please provide a valid user key.");
         if (!routeService.isRouteAvailable(dto.getSource(), dto.getDestination()))

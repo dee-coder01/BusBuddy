@@ -133,7 +133,7 @@ public class RouteService {
     }
 
     public Route addRoute(@Valid Route route, String key) throws AdminException, RouteException {
-        UserSession session = userLoginRepo.findByUserID(key);
+        UserSession session = userLoginRepo.findByUuid(key);
         if (session == null)
             throw new AdminException("User key is not correct! Please provide a valid key.");
         Route newRoute = getRouteFromSourceToDestination(route.getRouteFrom(), route.getRouteTo());
@@ -159,7 +159,7 @@ public class RouteService {
     }
 
     public Route updateRoute(Route route, String key) throws RouteException, AdminException {
-        UserSession loggedInAdmin = userLoginRepo.findByUserID(key);
+        UserSession loggedInAdmin = userLoginRepo.findByUuid(key);
         if (loggedInAdmin == null) {
             throw new AdminException("Please provide a valid id to add route !");
         }
@@ -175,7 +175,7 @@ public class RouteService {
     }
 
     public Route deleteRoute(int routeID, String key) throws RouteException, AdminException {
-        UserSession loggedInAdmin = userLoginRepo.findByUserID(key);
+        UserSession loggedInAdmin = userLoginRepo.findByUuid(key);
         if (loggedInAdmin == null) {
             throw new AdminException("Please provide a valid id to add route !");
         }
