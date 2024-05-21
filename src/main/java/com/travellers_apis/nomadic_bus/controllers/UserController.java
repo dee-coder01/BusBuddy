@@ -9,10 +9,10 @@ import com.travellers_apis.nomadic_bus.models.User;
 import com.travellers_apis.nomadic_bus.services.UserLoginService;
 import com.travellers_apis.nomadic_bus.services.UserSignUpService;
 
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,11 +27,11 @@ public class UserController {
     private UserSignUpService signUpService;
 
     @PostMapping("/login")
-    public ResponseEntity<UserSessionDTO> userLogin(@Valid @RequestBody LoginCredential userInfo) {
-        UserSessionDTO session = service.validateUserCredential(userInfo);
-        if (session == null)
-            return ResponseEntity.ok().body(null);
-        return ResponseEntity.ok().body(session);
+    public ResponseEntity<UserSessionDTO> userLogin() {
+        LoginCredential loginCredential = (LoginCredential) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        System.out.println(loginCredential);
+        return ResponseEntity.accepted().body(service.validateUserCredential(loginCredential));
     }
 
     @GetMapping("/logout")
@@ -41,8 +41,8 @@ public class UserController {
 
     @PostMapping("/signup")
     public ResponseEntity<String> signUpUser(@RequestBody User userDetails) {
-        signUpService.userSignUp(userDetails);
-        return ResponseEntity.accepted().body("Successful");
+        return signUpService.userSignUp(userDetails) ? ResponseEntity.accepted().body("Successful")
+                : ResponseEntity.badRequest().body("failure");
     }
 
 }
