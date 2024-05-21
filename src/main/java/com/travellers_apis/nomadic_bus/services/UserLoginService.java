@@ -3,6 +3,8 @@ package com.travellers_apis.nomadic_bus.services;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.travellers_apis.nomadic_bus.dtos.UserSessionDTO;
@@ -21,6 +23,8 @@ public class UserLoginService {
     private UserLoginRepo loginRepo;
 
     public UserSessionDTO validateUserCredential(LoginCredential credential) {
+        if (!SecurityContextHolder.getContext().getAuthentication().isAuthenticated())
+            return null;
         User user = repo.findByEmailAndPassword(credential.getEmail(), credential.getPassword());
         if (user == null)
             return null;
@@ -39,5 +43,12 @@ public class UserLoginService {
         }
         loginRepo.deleteByUserID(currentSession.getUserID());
         return true;
+    }
+
+    public User findUserWithUserName(String userName) {
+        User user = repo.findByEmail(userName);
+        if (user == null)
+            throw new UsernameNotFoundException("User with user name: " + userName + " not found in the database.");
+        return user;
     }
 }
