@@ -55,9 +55,9 @@ public class User {
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Reservation> reservationList = new ArrayList<>();
+    private final List<Reservation> reservationList = new ArrayList<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "user")
-    private List<Feedback> feedbackList = new ArrayList<>();
+    private final List<Feedback> feedbackList = new ArrayList<>();
 }

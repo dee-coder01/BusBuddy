@@ -15,23 +15,25 @@ import com.travellers_apis.nomadic_bus.models.CustomErrorDetails;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+    private static final String VALIDATION_EXCEPTION = "Validation error!";
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<CustomErrorDetails> exceptionHandler(Exception ex, WebRequest web) {
-        CustomErrorDetails error = new CustomErrorDetails(LocalDateTime.now(), "Validation error!",
+        CustomErrorDetails error = new CustomErrorDetails(LocalDateTime.now(), VALIDATION_EXCEPTION,
                 web.getDescription(false));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     @ExceptionHandler(AdminException.class)
     public ResponseEntity<CustomErrorDetails> adminExceptionHandler(AdminException ex, WebRequest web) {
-        CustomErrorDetails error = new CustomErrorDetails(LocalDateTime.now(), "Validation error!",
+        CustomErrorDetails error = new CustomErrorDetails(LocalDateTime.now(), VALIDATION_EXCEPTION,
                 web.getDescription(false));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<CustomErrorDetails> methodArgsNotValidExceptionHandler(MethodArgumentNotValidException ex) {
-        CustomErrorDetails error = new CustomErrorDetails(LocalDateTime.now(), "Validation error!", null);
+        CustomErrorDetails error = new CustomErrorDetails(LocalDateTime.now(), VALIDATION_EXCEPTION, null);
         StringBuilder errors = new StringBuilder();
         ex.getBindingResult().getFieldErrors().forEach(er -> errors.append(er.getDefaultMessage() + "\n"));
         error.setDetails(errors.toString());
@@ -42,18 +44,16 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public CustomErrorDetails busExceptionHandler(BusException ex, WebRequest wb) {
-        CustomErrorDetails error = CustomErrorDetails.builder().time(LocalDateTime.now()).message("Wrong bus details")
+        return CustomErrorDetails.builder().time(LocalDateTime.now()).message("Wrong bus details")
                 .details(wb.getDescription(false)).build();
-        return error;
     }
 
     @ExceptionHandler(RouteException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public CustomErrorDetails routeExceptionHandler(RouteException ex, WebRequest wb) {
-        CustomErrorDetails error = CustomErrorDetails.builder().time(LocalDateTime.now())
+        return CustomErrorDetails.builder().time(LocalDateTime.now())
                 .message("Wrong route details.")
                 .details(wb.getDescription(false)).build();
-        return error;
     }
 }

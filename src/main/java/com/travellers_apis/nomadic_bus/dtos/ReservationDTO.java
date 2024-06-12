@@ -6,7 +6,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-// import jakarta.persistence.Entity;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -15,7 +14,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-// @Entity
 @Data
 @Builder
 @NoArgsConstructor
@@ -29,8 +27,6 @@ public class ReservationDTO {
     @NotBlank(message = "Destination should not be blanked")
     private String destination;
 
-    // @NotNull(message = "Bus id required to book a reservation")
-    // @NotBlank(message = "Bus id should not be blanked")
     private Integer busId;
 
     @NotNull

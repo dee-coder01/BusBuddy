@@ -30,7 +30,6 @@ public class UserController {
     public ResponseEntity<UserSessionDTO> userLogin() {
         LoginCredential loginCredential = (LoginCredential) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
-        System.out.println(loginCredential);
         return ResponseEntity.accepted().body(service.validateUserCredential(loginCredential));
     }
 

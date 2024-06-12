@@ -3,7 +3,6 @@ package com.travellers_apis.nomadic_bus.services;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.travellers_apis.nomadic_bus.commons.BusException;
@@ -20,17 +19,15 @@ import com.travellers_apis.nomadic_bus.repositories.ReservationRepo;
 import com.travellers_apis.nomadic_bus.repositories.UserLoginRepo;
 import com.travellers_apis.nomadic_bus.repositories.UserRepo;
 
+import lombok.AllArgsConstructor;
+
 @Service
+@AllArgsConstructor
 public class ReservationService {
-    @Autowired
     private ReservationRepo repository;
-    @Autowired
     private RouteService routeService;
-    @Autowired
     private BusService busService;
-    @Autowired
     UserRepo userRepo;
-    @Autowired
     UserLoginRepo loginRepo;
 
     public ReservationResponseDTO addReservation(ReservationDTO dto, String userKey)
@@ -68,8 +65,7 @@ public class ReservationService {
         return generateReservationResponseDTO(dto, bus, "Cancelled");
     }
 
-    public ReservationResponseDTO generateReservationResponseDTO(ReservationDTO dto, Bus bus, String status)
-            throws BusException {
+    public ReservationResponseDTO generateReservationResponseDTO(ReservationDTO dto, Bus bus, String status) {
         return ReservationResponseDTO.builder()
                 .status(status)
                 .source(dto.getSource())

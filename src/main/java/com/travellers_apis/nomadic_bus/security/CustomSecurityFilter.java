@@ -3,6 +3,7 @@ package com.travellers_apis.nomadic_bus.security;
 import java.io.IOException;
 
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.util.matcher.RequestMatcher;
@@ -41,9 +42,9 @@ public class CustomSecurityFilter implements Filter {
                 Authentication userAuthObj = manager.authenticate(userToken);
 
                 if (!userAuthObj.isAuthenticated())
-                    throw new Exception();
+                    throw new BadCredentialsException("Failed to authenticate the user.");
                 SecurityContextHolder.getContext().setAuthentication(userAuthObj);
-            } catch (Exception e) {
+            } catch (BadCredentialsException e) {
                 res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid login request");
             }
         }

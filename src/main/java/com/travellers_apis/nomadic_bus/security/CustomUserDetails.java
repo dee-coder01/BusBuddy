@@ -17,10 +17,6 @@ public class CustomUserDetails implements UserDetails {
     private String mobile;
     private Collection<? extends GrantedAuthority> authorities;
 
-    public String getUserName() {
-        return userName;
-    }
-
     public String getFirstName() {
         return firstName;
     }

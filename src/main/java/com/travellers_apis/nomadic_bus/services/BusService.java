@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.travellers_apis.nomadic_bus.commons.AdminException;
@@ -17,22 +16,22 @@ import com.travellers_apis.nomadic_bus.repositories.BusRepository;
 import com.travellers_apis.nomadic_bus.repositories.UserLoginRepo;
 
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 
 @Service
+@AllArgsConstructor
 public class BusService {
-    @Autowired
+    private static final String INVALID_USER_KEY = "User key is not valid, Please provide a valid key.";
     private BusRepository busRepo;
-    @Autowired
     private UserLoginRepo userLoginRepo;
-    @Autowired
     private RouteService routeService;
 
     public Bus addNewBusToDB(Bus bus, String userKey) throws AdminException, BusException {
         UserSession currentSession = userLoginRepo.findByUuid(userKey);
         if (currentSession == null)
-            throw new AdminException("user key is not valid, Please provide a valid key.");
+            throw new AdminException(INVALID_USER_KEY);
         if (bus.getRouteFrom().equals(bus.getRouteTo()))
-            throw new BusException("journey start and destination can't be same.");
+            throw new BusException("Journey start and destination can't be same.");
         Route route = new Route(bus.getRouteFrom(), bus.getRouteTo(), bus.getRoute().getDistance());
         bus.setRoute(route);
         route.getBusList().add(bus);
@@ -43,7 +42,7 @@ public class BusService {
     public Bus updateBusInfo(@Valid Bus bus, String userKey) throws AdminException, BusException, RouteException {
         UserSession currentSession = userLoginRepo.findByUuid(userKey);
         if (currentSession == null)
-            throw new AdminException("user key is not valid, Please provide a valid key.");
+            throw new AdminException(INVALID_USER_KEY);
         if (bus.getBusId() == null)
             throw new BusException("Bus id can't be null! please provide bus id.");
         if (!(busRepo.findById(bus.getBusId()).isPresent()))
@@ -63,12 +62,12 @@ public class BusService {
     public Bus deleteBusInfo(@Valid Integer busId, String userKey) throws AdminException, BusException {
         UserSession currentSession = userLoginRepo.findByUuid(userKey);
         if (currentSession == null)
-            throw new AdminException("user key is not valid, Please provide a valid key.");
+            throw new AdminException(INVALID_USER_KEY);
         Optional<Bus> bus = busRepo.findById(busId);
         if (bus.isPresent()) {
             Bus existingBus = bus.get();
             if (LocalDate.now().isBefore(existingBus.getBusJourneyDate())
-                    && existingBus.getAvailableSeats() != existingBus.getSeats()) {
+                    && existingBus.getAvailableSeats().equals(existingBus.getSeats())) {
                 throw new BusException("Can't delete scheduled and reserved bus.");
             }
             busRepo.delete(existingBus);

@@ -2,8 +2,6 @@ package com.travellers_apis.nomadic_bus.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -12,17 +10,21 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+import com.travellers_apis.nomadic_bus.services.UserLoginService;
+import com.travellers_apis.nomadic_bus.services.UserSignUpService;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
     @Bean
-    CustomSecurityFilter securityFilterChain() {
-        return new CustomSecurityFilter(authenticationManager(), new AntPathRequestMatcher("/user/login", "POST"));
+    CustomSecurityFilter securityFilterChain(CustomAuthenticationManager manager) {
+        return new CustomSecurityFilter(manager, new AntPathRequestMatcher("/user/login", "POST"));
     }
 
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain filterChain(HttpSecurity http, CustomSecurityFilter filter, CustomAuthenticationManager manager,
+            CustomAuthenticationProvider provider) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(
@@ -32,25 +34,25 @@ public class SecurityConfig {
                                 .requestMatchers("/user/signup")
                                 .permitAll()
                                 .anyRequest().authenticated())
-                .addFilterBefore(securityFilterChain(), UsernamePasswordAuthenticationFilter.class)
-                .authenticationManager(authenticationManager())
-                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
+                .authenticationManager(manager)
+                .authenticationProvider(provider)
                 .build();
     }
 
     @Bean
-    CustomAuthenticationProvider authenticationProvider() {
-        return new CustomAuthenticationProvider();
+    CustomAuthenticationProvider authenticationProvider(PasswordEncoder encoder, CustomUserDetailsManager manager) {
+        return new CustomAuthenticationProvider(encoder, manager);
     }
 
     @Bean
-    AuthenticationManager authenticationManager() {
-        return new ProviderManager(authenticationProvider());
+    CustomAuthenticationManager authenticationManager(CustomAuthenticationProvider provider) {
+        return new CustomAuthenticationManager(provider);
     }
 
     @Bean
-    CustomUserDetailsManager userDetailsManager() {
-        return new CustomUserDetailsManager();
+    CustomUserDetailsManager userDetailsManager(UserLoginService loginService, UserSignUpService signUpService) {
+        return new CustomUserDetailsManager(loginService, signUpService);
     }
 
     @Bean
