@@ -5,6 +5,7 @@ import com.travellers_apis.nomadic_bus.models.UserSession;
 import com.travellers_apis.nomadic_bus.services.AdminLoginService;
 
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,12 +16,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 @RequestMapping("/admin")
+@AllArgsConstructor
 public class AdminLoginController {
     private AdminLoginService service;
-
-    public AdminLoginController(AdminLoginService service) {
-        this.service = service;
-    }
 
     @PostMapping("/login")
     public ResponseEntity<UserSession> getMethodName(@Valid @RequestBody LoginCredential admin) {

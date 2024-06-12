@@ -11,15 +11,13 @@ import com.travellers_apis.nomadic_bus.models.UserSession;
 import com.travellers_apis.nomadic_bus.repositories.AdminRepo;
 import com.travellers_apis.nomadic_bus.repositories.UserLoginRepo;
 
+import lombok.AllArgsConstructor;
+
 @Service
+@AllArgsConstructor
 public class AdminLoginService {
     private AdminRepo repo;
     private UserLoginRepo loginRepo;
-
-    public AdminLoginService(AdminRepo repo, UserLoginRepo loginRepo) {
-        this.repo = repo;
-        this.loginRepo = loginRepo;
-    }
 
     public UserSession validateAdminCredential(LoginCredential credential) {
         Admin admin = repo.findByEmailAndPassword(credential.getEmail(), credential.getPassword());

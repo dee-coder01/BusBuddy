@@ -15,7 +15,6 @@ public class AdminService {
     }
 
     public Admin addNewAdmin(Admin admin) throws AdminException {
-        System.out.println(admin);
         if (admin == null)
             throw new AdminException("Admin can't be null.");
         return repo.save(admin);

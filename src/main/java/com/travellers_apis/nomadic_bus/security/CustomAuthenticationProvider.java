@@ -2,7 +2,6 @@ package com.travellers_apis.nomadic_bus.security;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
@@ -14,10 +13,13 @@ import com.travellers_apis.nomadic_bus.models.LoginCredential;
 
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
-    @Autowired
     CustomUserDetailsManager userDetailsManager;
-    @Autowired
     PasswordEncoder passwordEncoder;
+
+    public CustomAuthenticationProvider(PasswordEncoder passwordEncoder, CustomUserDetailsManager userDetailsManager) {
+        this.passwordEncoder = passwordEncoder;
+        this.userDetailsManager = userDetailsManager;
+    }
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
@@ -27,9 +29,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
                 userDetails.getPassword()))
             throw new BadCredentialsException("Invalid password.");
         LoginCredential loginCredential = new LoginCredential(userDetails.getUsername(), userDetails.getPassword());
-        System.out.println(loginCredential);
-        CustomAuthenticationToken token = new CustomAuthenticationToken(loginCredential, null, List.of(() -> "Read"));
-        return token;
+        return new CustomAuthenticationToken(loginCredential, null, List.of(() -> "Read"));
     }
 
     @Override

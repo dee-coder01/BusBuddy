@@ -10,7 +10,8 @@ import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.travellers_apis.nomadic_bus.commons.AdminException;
@@ -22,12 +23,13 @@ import com.travellers_apis.nomadic_bus.repositories.RouteRepository;
 import com.travellers_apis.nomadic_bus.repositories.UserLoginRepo;
 
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 
 @Service
+@AllArgsConstructor
 public class RouteService {
-    @Autowired
+    private static final Logger logger = LoggerFactory.getLogger(RouteService.class);
     private RouteRepository routeRepository;
-
     private UserLoginRepo userLoginRepo;
 
     public Route shortestRoute(String source, String destination) {
@@ -113,16 +115,17 @@ public class RouteService {
         Set<String> visited = new HashSet<>();
         Queue<String> q = new LinkedList<>();
         q.add(source);
-        while (q.size() > 0) {
+        while (!q.isEmpty()) {
             String src = q.remove();
+            if (src.equals(destination))
+                break;
             if (visited.contains(src))
                 continue;
             visited.add(src);
-            System.out.println(visited);
             for (Route route : routeGraph.get(src)) {
                 if (!visited.contains(route.getRouteTo())) {
                     q.add(route.getRouteTo());
-                    System.out.println(route.getRouteTo());
+                    logger.info(route.getRouteTo());
                 }
             }
         }

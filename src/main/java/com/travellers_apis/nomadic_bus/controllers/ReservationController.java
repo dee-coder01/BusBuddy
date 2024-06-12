@@ -13,17 +13,17 @@ import com.travellers_apis.nomadic_bus.dtos.ReservationResponseDTO;
 import com.travellers_apis.nomadic_bus.services.ReservationService;
 
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/user/reservation")
+@AllArgsConstructor
 public class ReservationController {
 
-    @Autowired
     private ReservationService service;
 
     @PostMapping("/add")
@@ -36,7 +36,7 @@ public class ReservationController {
     @DeleteMapping("/cancel")
     public ReservationResponseDTO cancelReservation(@Valid @RequestBody ReservationDTO dto,
             @RequestParam(required = true) String userKey)
-            throws UserLoginException, RouteException, BusException, ReservationException {
+            throws UserLoginException, RouteException, BusException {
         return service.cancelReservation(dto, userKey);
     }
 }

@@ -1,6 +1,5 @@
 package com.travellers_apis.nomadic_bus.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -12,15 +11,18 @@ import com.travellers_apis.nomadic_bus.services.UserSignUpService;
 
 public class CustomUserDetailsManager implements UserDetailsManager {
 
-    @Autowired
-    UserLoginService loginService;
-    UserSignUpService signUpService;
+    private UserLoginService loginService;
+    private UserSignUpService signUpService;
+
+    public CustomUserDetailsManager(UserLoginService loginService, UserSignUpService signUpService) {
+        this.loginService = loginService;
+        this.signUpService = signUpService;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = loginService.findUserWithUserName(username);
-        CustomUserDetails userDetails = generateCustomUserDetails(user);
-        return userDetails;
+        return generateCustomUserDetails(user);
     }
 
     @Override
