@@ -1,5 +1,6 @@
 package com.travellers_apis.nomadic_bus.security;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,6 +18,9 @@ import com.travellers_apis.nomadic_bus.services.UserSignUpService;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    @Value("${security.public-urls}")
+    private String[] publicUrls;
+
     @Bean
     CustomSecurityFilter securityFilterChain(CustomAuthenticationManager manager) {
         return new CustomSecurityFilter(manager, new AntPathRequestMatcher("/user/login", "POST"));
@@ -29,9 +33,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(
                         req -> req
-                                .requestMatchers("/user/login")
-                                .permitAll()
-                                .requestMatchers("/user/signup")
+                                .requestMatchers(publicUrls)
                                 .permitAll()
                                 .anyRequest().authenticated())
                 .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)

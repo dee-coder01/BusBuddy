@@ -90,7 +90,7 @@ public class RouteService {
         List<List<Route>> routes = new ArrayList<>();
         Map<String, Boolean> visited = new HashMap<>();
         routeFinder(routeGraph, source, destination, routes, visited, new ArrayList<>());
-        return routes;
+        return routes.isEmpty() ? null : routes;
     }
 
     private void routeFinder(Map<String, List<Route>> routeGraph, String source, String destination,
