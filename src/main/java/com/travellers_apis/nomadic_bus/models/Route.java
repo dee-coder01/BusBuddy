@@ -37,7 +37,7 @@ public class Route {
     private Integer distance;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "route", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "route", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Bus> busList = new ArrayList<>();
 
     public Route(String routeFrom, String routeTo, Integer distance) {

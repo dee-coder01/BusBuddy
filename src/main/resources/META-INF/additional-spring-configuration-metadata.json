@@ -1,0 +1,9 @@
+{
+    "properties": [
+        {
+            "name": "security.public-urls",
+            "type": "java.lang.String",
+            "description": "security.public-urls are the list of all the public APIs"
+        }
+    ]
+}
