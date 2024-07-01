@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 
@@ -18,19 +17,16 @@ import com.travellers_apis.nomadic_bus.commons.AdminException;
 import com.travellers_apis.nomadic_bus.commons.RouteException;
 import com.travellers_apis.nomadic_bus.models.Bus;
 import com.travellers_apis.nomadic_bus.models.Route;
-import com.travellers_apis.nomadic_bus.models.UserSession;
 import com.travellers_apis.nomadic_bus.repositories.RouteRepository;
-import com.travellers_apis.nomadic_bus.repositories.UserLoginRepo;
 
-import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class RouteService {
     private static final Logger logger = LoggerFactory.getLogger(RouteService.class);
-    private RouteRepository routeRepository;
-    private UserLoginRepo userLoginRepo;
+    final RouteRepository routeRepository;
+    final UserSessionService sessionService;
 
     public Route shortestRoute(String source, String destination) {
         Map<String, Boolean> visited = new HashMap<>();
@@ -132,23 +128,27 @@ public class RouteService {
     }
 
     public Route getRouteFromSourceToDestination(String source, String destination) {
-        return routeRepository.findByRouteFromAndRouteTo(source, destination);
+        return routeRepository.findByRouteFromAndRouteTo(source, destination)
+                .orElseThrow(() -> new RouteException("Route not found."));
     }
 
-    public Route addRoute(@Valid Route route, String key) throws AdminException, RouteException {
-        UserSession session = userLoginRepo.findByUuid(key);
-        if (session == null)
+    public boolean routeExistsBetweenSourceAndDestination(String source, String destination) {
+        return routeRepository.findByRouteFromAndRouteTo(source, destination).isPresent();
+    }
+
+    public Route addRoute(Route route, String key) {
+        boolean isValidKey = sessionService.validateUserKey(key);
+        if (!isValidKey)
             throw new AdminException("User key is not correct! Please provide a valid key.");
-        Route newRoute = getRouteFromSourceToDestination(route.getRouteFrom(), route.getRouteTo());
-        if (newRoute == null) {
+        try {
+            return getRouteFromSourceToDestination(route.getRouteFrom(), route.getRouteTo());
+        } catch (RouteException e) {
             route.setBusList(new ArrayList<>());
             return routeRepository.save(route);
-        } else {
-            throw new RouteException("Route already exists.");
         }
     }
 
-    public List<Route> viewAllRoute() throws RouteException {
+    public List<Route> viewAllRoute() {
         List<Route> routes = routeRepository.findAll();
         if (routes.isEmpty())
             throw new RouteException("No route available");
@@ -156,38 +156,30 @@ public class RouteService {
             return routes;
     }
 
-    public Route viewRoute(int routeId) throws RouteException {
-        Optional<Route> opt = routeRepository.findById(routeId);
-        return opt.orElseThrow(() -> new RouteException("There is no route present of this  routeId :" + routeId));
+    public Route viewRoute(int routeId) {
+        return routeRepository.findById(routeId)
+                .orElseThrow(() -> new RouteException("There is no route present of this  routeId :" + routeId));
     }
 
-    public Route updateRoute(Route route, String key) throws RouteException, AdminException {
-        UserSession loggedInAdmin = userLoginRepo.findByUuid(key);
-        if (loggedInAdmin == null) {
-            throw new AdminException("Please provide a valid id to add route !");
-        }
-        Optional<Route> existedRoute = routeRepository.findById(route.getRouteID());
-        if (existedRoute.isPresent()) {
-            Route presentRoute = existedRoute.get();
-            List<Bus> busList = presentRoute.getBusList();
-            if (!busList.isEmpty())
-                throw new RouteException("Cannot update running route! Buses are already scheduled in the route.");
-            return routeRepository.save(route);
-        } else
-            throw new RouteException("Route doesn't exist of  this routeId : " + route.getRouteID());
+    public Route updateRoute(Route route, String key) {
+        boolean isValidKey = sessionService.validateUserKey(key);
+        if (isValidKey)
+            throw new AdminException("User key is not correct! Please provide a valid key.");
+        Route presentRoute = routeRepository.findById(route.getRouteID())
+                .orElseThrow(() -> new RouteException("Route doesn't exist of  this routeId : " + route.getRouteID()));
+        List<Bus> busList = presentRoute.getBusList();
+        if (!busList.isEmpty())
+            throw new RouteException("Cannot update running route! Buses are already scheduled in the route.");
+        return routeRepository.save(route);
+
     }
 
-    public Route deleteRoute(int routeID, String key) throws RouteException, AdminException {
-        UserSession loggedInAdmin = userLoginRepo.findByUuid(key);
-        if (loggedInAdmin == null) {
-            throw new AdminException("Please provide a valid id to add route !");
-        }
-        Optional<Route> route = routeRepository.findById(routeID);
-        if (route.isPresent()) {
-            Route existingRoute = route.get();
-            routeRepository.delete(existingRoute);
-            return existingRoute;
-        } else
-            throw new RouteException("There is no route of this routeId : " + routeID);
+    public void deleteRoute(int routeID, String key) {
+        boolean isValidKey = sessionService.validateUserKey(key);
+        if (isValidKey)
+            throw new AdminException("User key is not correct! Please provide a valid key.");
+        Route existingRoute = routeRepository.findById(routeID)
+                .orElseThrow(() -> new RouteException("Invalid route id."));
+        routeRepository.deleteById(existingRoute.getRouteID());
     }
 }

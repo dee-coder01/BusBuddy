@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -23,23 +24,16 @@ public class AdminLoginController {
     @PostMapping("/login")
     public ResponseEntity<UserSession> getMethodName(@Valid @RequestBody LoginCredential admin) {
         UserSession session = service.validateAdminCredential(admin);
-        if (session != null) {
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(session);
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(session);
-        }
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(session);
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logOutAdminEntity(@RequestBody UserSession session) {
-        if (session == null) {
+    public ResponseEntity<String> logOutAdminEntity(@RequestParam String key) {
+        if (key == null) {
             return ResponseEntity.badRequest().body("User is not logged in.");
         }
-        if (service.logOutAdmin(session)) {
-            return ResponseEntity.ok().body("User logout successful.");
-        } else {
-            return ResponseEntity.badRequest().body("Something went wrong.");
-        }
+        service.logOutAdmin(key);
+        return ResponseEntity.ok().body("User logout successful.");
     }
 
 }

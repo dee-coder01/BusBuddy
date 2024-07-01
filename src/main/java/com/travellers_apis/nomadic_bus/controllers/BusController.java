@@ -1,6 +1,7 @@
 package com.travellers_apis.nomadic_bus.controllers;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,7 @@ public class BusController {
     @PostMapping("admin/add")
     public ResponseEntity<Bus> addNewBus(@Valid @RequestBody Bus bus, @RequestParam(name = "key") String userKey)
             throws AdminException, BusException {
-        busService.addNewBusToDB(bus, userKey);
+        busService.addNewBus(bus, userKey);
         return ResponseEntity.accepted().body(bus);
     }
 
@@ -62,9 +63,9 @@ public class BusController {
     }
 
     @GetMapping("/bus/type/{busType}")
-    public ResponseEntity<List<Bus>> getBusesByBusTypeHandler(@PathVariable("busType") String busType)
+    public ResponseEntity<Set<Bus>> getBusesByBusTypeHandler(@PathVariable("busType") String busType)
             throws BusException {
-        List<Bus> busList = busService.findAllBusByBusType(busType);
-        return new ResponseEntity<>(busList, HttpStatus.OK);
+        Set<Bus> busList = busService.findAllBusByBusType(busType);
+        return ResponseEntity.status(HttpStatus.OK).body(busList);
     }
 }

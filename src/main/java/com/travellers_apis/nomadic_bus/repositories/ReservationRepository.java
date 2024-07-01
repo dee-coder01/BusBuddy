@@ -13,7 +13,7 @@ import com.travellers_apis.nomadic_bus.models.Reservation;
 import jakarta.transaction.Transactional;
 
 @Repository
-public interface ReservationRepo extends JpaRepository<Reservation, Integer> {
+public interface ReservationRepository extends JpaRepository<Reservation, Integer> {
     String cancellationQuery = "delete from reservation where booked_seat = :booked_seat and bus_bus_id = :bus_bus_id and journey_date = :journey_date and source = :source and destination = :destination";
 
     @Modifying
