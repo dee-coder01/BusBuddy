@@ -26,43 +26,43 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
-@RequestMapping("/bus/")
+@RequestMapping("/bus")
 @AllArgsConstructor
 public class BusController {
     private BusService busService;
 
-    @PostMapping("admin/add")
+    @PostMapping("/admin")
     public ResponseEntity<Bus> addNewBus(@Valid @RequestBody Bus bus, @RequestParam(name = "key") String userKey)
             throws AdminException, BusException {
         busService.addNewBus(bus, userKey);
         return ResponseEntity.accepted().body(bus);
     }
 
-    @PutMapping("admin/update")
+    @PutMapping("/admin")
     public ResponseEntity<Bus> updateBusEntity(@Valid @RequestBody Bus bus,
             @RequestParam(name = "key") String userKey) throws AdminException, BusException, RouteException {
         Bus updatedBus = busService.updateBusInfo(bus, userKey);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(updatedBus);
     }
 
-    @DeleteMapping("admin/delete/{busId}")
+    @DeleteMapping("/admin/{busId}")
     public ResponseEntity<Bus> deleteBusEntity(@PathVariable("busId") Integer busId,
             @RequestParam(name = "key") String userKey) throws AdminException, BusException, RouteException {
         Bus deletedBus = busService.deleteBusInfo(busId, userKey);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(deletedBus);
     }
 
-    @GetMapping("bus/all")
+    @GetMapping("/all")
     public ResponseEntity<List<Bus>> getAllBusInfo() {
         return ResponseEntity.status(HttpStatus.OK).body(busService.getAllBus());
     }
 
-    @GetMapping("bus/all/{busId}")
+    @GetMapping("/{busId}")
     public ResponseEntity<Bus> getBusInfo(@PathVariable(name = "busId") Integer busId) throws BusException {
         return ResponseEntity.status(HttpStatus.OK).body(busService.getBusInfo(busId));
     }
 
-    @GetMapping("/bus/type/{busType}")
+    @GetMapping("/type/{busType}")
     public ResponseEntity<Set<Bus>> getBusesByBusTypeHandler(@PathVariable("busType") String busType)
             throws BusException {
         Set<Bus> busList = busService.findAllBusByBusType(busType);
