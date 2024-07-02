@@ -20,14 +20,14 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class UserLoginService {
-    final UserRepository repo;
+    final UserRepository repository;
     final UserSessionService sessionService;
 
     @Transactional
     public UserSessionDTO validateUserCredential(LoginCredential credential) {
         if (!SecurityContextHolder.getContext().getAuthentication().isAuthenticated())
             return null;
-        User user = repo.findByEmailAndPassword(credential.getEmail(), credential.getPassword()).orElse(null);
+        User user = repository.findByEmailAndPassword(credential.getEmail(), credential.getPassword()).orElse(null);
         if (user == null)
             throw new UserException("Invalid login credentials.");
         UserSession session = new UserSession();
@@ -50,22 +50,22 @@ public class UserLoginService {
 
     @Transactional(readOnly = true)
     public User findUserWithUserName(String userName) {
-        return repo.findByEmail(userName)
+        return repository.findByEmail(userName)
                 .orElseThrow(() -> new UserException("User not found with username: " + userName));
     }
 
     @Transactional(readOnly = true)
     public boolean userExistsWithUserName(String userName) {
-        return repo.findByEmail(userName).isPresent();
+        return repository.findByEmail(userName).isPresent();
     }
 
     @Transactional(readOnly = true)
     public User findUserWithUserId(Long userId) {
-        return repo.findById(userId).orElseThrow(() -> new UserException("Invalid user id"));
+        return repository.findById(userId).orElseThrow(() -> new UserException("Invalid user id"));
     }
 
     @Transactional(readOnly = true)
     public boolean userExistsWithUserId(Long userId) {
-        return repo.findById(userId).isPresent();
+        return repository.findById(userId).isPresent();
     }
 }

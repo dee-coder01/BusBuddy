@@ -19,14 +19,14 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<CustomErrorDetails> exceptionHandler(Exception ex, WebRequest web) {
-        CustomErrorDetails error = new CustomErrorDetails(LocalDateTime.now(), VALIDATION_EXCEPTION,
+        CustomErrorDetails error = new CustomErrorDetails(LocalDateTime.now(), ex.getMessage(),
                 web.getDescription(false));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     @ExceptionHandler(AdminException.class)
     public ResponseEntity<CustomErrorDetails> adminExceptionHandler(AdminException ex, WebRequest web) {
-        CustomErrorDetails error = new CustomErrorDetails(LocalDateTime.now(), VALIDATION_EXCEPTION,
+        CustomErrorDetails error = new CustomErrorDetails(LocalDateTime.now(), ex.getMessage(),
                 web.getDescription(false));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
@@ -44,7 +44,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public CustomErrorDetails busExceptionHandler(BusException ex, WebRequest wb) {
-        return CustomErrorDetails.builder().time(LocalDateTime.now()).message("Wrong bus details")
+        return CustomErrorDetails.builder().time(LocalDateTime.now()).message(ex.getMessage())
                 .details(wb.getDescription(false)).build();
     }
 
@@ -53,7 +53,7 @@ public class GlobalExceptionHandler {
     @ResponseBody
     public CustomErrorDetails routeExceptionHandler(RouteException ex, WebRequest wb) {
         return CustomErrorDetails.builder().time(LocalDateTime.now())
-                .message("Wrong route details.")
+                .message(ex.getMessage())
                 .details(wb.getDescription(false)).build();
     }
 }

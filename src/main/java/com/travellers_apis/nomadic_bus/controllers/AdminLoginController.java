@@ -5,7 +5,7 @@ import com.travellers_apis.nomadic_bus.models.UserSession;
 import com.travellers_apis.nomadic_bus.services.AdminLoginService;
 
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 @RequestMapping("/admin")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AdminLoginController {
-    private AdminLoginService service;
+    final AdminLoginService service;
 
     @PostMapping("/login")
     public ResponseEntity<UserSession> getMethodName(@Valid @RequestBody LoginCredential admin) {
@@ -28,7 +28,7 @@ public class AdminLoginController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logOutAdminEntity(@RequestParam String key) {
+    public ResponseEntity<String> logOutAdminEntity(@RequestParam(required = true) String key) {
         if (key == null) {
             return ResponseEntity.badRequest().body("User is not logged in.");
         }

@@ -13,7 +13,6 @@ import com.travellers_apis.nomadic_bus.models.Bus;
 import com.travellers_apis.nomadic_bus.models.Route;
 import com.travellers_apis.nomadic_bus.repositories.BusRepository;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -54,7 +53,7 @@ public class BusService {
     }
 
     @Transactional
-    public Bus deleteBusInfo(@Valid Integer busId, String userKey) {
+    public Bus deleteBusInfo(Integer busId, String userKey) {
         boolean isValidKey = sessionService.validateUserKey(userKey);
         if (!isValidKey) {
             throw new AdminException(INVALID_USER_KEY);

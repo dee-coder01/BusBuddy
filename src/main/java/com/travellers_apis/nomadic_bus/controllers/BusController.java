@@ -32,7 +32,8 @@ public class BusController {
     private BusService busService;
 
     @PostMapping("/admin")
-    public ResponseEntity<Bus> addNewBus(@Valid @RequestBody Bus bus, @RequestParam(name = "key") String userKey)
+    public ResponseEntity<Bus> addNewBus(@Valid @RequestBody Bus bus,
+            @RequestParam(required = true, name = "key") String userKey)
             throws AdminException, BusException {
         busService.addNewBus(bus, userKey);
         return ResponseEntity.accepted().body(bus);
@@ -40,14 +41,16 @@ public class BusController {
 
     @PutMapping("/admin")
     public ResponseEntity<Bus> updateBusEntity(@Valid @RequestBody Bus bus,
-            @RequestParam(name = "key") String userKey) throws AdminException, BusException, RouteException {
+            @RequestParam(required = true, name = "key") String userKey)
+            throws AdminException, BusException, RouteException {
         Bus updatedBus = busService.updateBusInfo(bus, userKey);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(updatedBus);
     }
 
     @DeleteMapping("/admin/{busId}")
     public ResponseEntity<Bus> deleteBusEntity(@PathVariable("busId") Integer busId,
-            @RequestParam(name = "key") String userKey) throws AdminException, BusException, RouteException {
+            @RequestParam(required = true, name = "key") String userKey)
+            throws AdminException, BusException, RouteException {
         Bus deletedBus = busService.deleteBusInfo(busId, userKey);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(deletedBus);
     }

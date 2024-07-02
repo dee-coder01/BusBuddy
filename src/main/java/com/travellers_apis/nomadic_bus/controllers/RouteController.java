@@ -28,7 +28,7 @@ public class RouteController {
 
     @PostMapping("/admin")
     public ResponseEntity<Route> addNewRouteEntity(@Valid @RequestBody Route route,
-            @RequestParam(required = true) String key) throws AdminException, RouteException {
+            @RequestParam(required = true, name = "key") String key) throws AdminException, RouteException {
         Route newRoute = routeService.addRoute(route, key);
         return new ResponseEntity<>(newRoute, HttpStatus.ACCEPTED);
     }
