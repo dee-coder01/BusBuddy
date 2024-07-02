@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class RouteController {
     private RouteService routeService;
 
-    @PostMapping("/admin/add")
+    @PostMapping("/admin")
     public ResponseEntity<Route> addNewRouteEntity(@Valid @RequestBody Route route,
             @RequestParam(required = true) String key) throws AdminException, RouteException {
         Route newRoute = routeService.addRoute(route, key);

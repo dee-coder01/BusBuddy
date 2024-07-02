@@ -3,6 +3,7 @@ package com.travellers_apis.nomadic_bus.controllers;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.travellers_apis.nomadic_bus.commons.UserException;
 import com.travellers_apis.nomadic_bus.dtos.UserSessionDTO;
 import com.travellers_apis.nomadic_bus.models.LoginCredential;
 import com.travellers_apis.nomadic_bus.models.User;
@@ -11,6 +12,7 @@ import com.travellers_apis.nomadic_bus.services.UserSignUpService;
 
 import lombok.AllArgsConstructor;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,8 +36,13 @@ public class UserController {
     }
 
     @GetMapping("/logout")
-    public boolean logoutUser(@RequestParam(required = true) String userKey) {
-        return service.logOutUser(userKey);
+    public ResponseEntity<String> logoutUser(@RequestParam(required = true) String userKey) {
+        try {
+            service.logOutUser(userKey);
+            return ResponseEntity.status(HttpStatus.OK).body("Log out successful.");
+        } catch (UserException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("failed to Log out, Please try again.");
+        }
     }
 
     @PostMapping("/signup")

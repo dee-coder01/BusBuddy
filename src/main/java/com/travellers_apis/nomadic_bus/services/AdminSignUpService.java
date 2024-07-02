@@ -6,17 +6,16 @@ import com.travellers_apis.nomadic_bus.commons.AdminException;
 import com.travellers_apis.nomadic_bus.models.Admin;
 import com.travellers_apis.nomadic_bus.repositories.AdminRepo;
 
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+
 @Service
-public class AdminService {
-    private AdminRepo repo;
+@RequiredArgsConstructor
+public class AdminSignUpService {
+    final AdminRepo repo;
 
-    public AdminService(AdminRepo repo) {
-        this.repo = repo;
-    }
-
+    @Transactional
     public Admin addNewAdmin(Admin admin) throws AdminException {
-        if (admin == null)
-            throw new AdminException("Admin can't be null.");
         return repo.save(admin);
     }
 }

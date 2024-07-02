@@ -3,40 +3,37 @@ package com.travellers_apis.nomadic_bus.services;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.travellers_apis.nomadic_bus.models.Admin;
 import com.travellers_apis.nomadic_bus.models.LoginCredential;
 import com.travellers_apis.nomadic_bus.models.UserSession;
 import com.travellers_apis.nomadic_bus.repositories.AdminRepo;
-import com.travellers_apis.nomadic_bus.repositories.UserLoginRepo;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AdminLoginService {
-    private AdminRepo repo;
-    private UserLoginRepo loginRepo;
+    final AdminRepo repo;
+    final UserSessionService sessionService;
 
+    @Transactional
     public UserSession validateAdminCredential(LoginCredential credential) {
-        Admin admin = repo.findByEmailAndPassword(credential.getEmail(), credential.getPassword());
-        if (admin == null)
-            return null;
+        Admin admin = repo.findByEmailAndPassword(credential.getEmail(), credential.getPassword())
+                .orElseThrow(() -> new BadCredentialsException("Check your credential."));
         UserSession session = new UserSession();
         session.setUserID(admin.getId());
         session.setTime(LocalDateTime.now());
         session.setUuid(UUID.randomUUID().toString());
-        loginRepo.save(session);
+        sessionService.createNewSession(session);
         return session;
     }
 
-    public boolean logOutAdmin(UserSession session) {
-        UserSession currentSession = loginRepo.findByUserID(session.getUserID());
-        if (currentSession == null) {
-            return false;
-        }
-        loginRepo.deleteByUserID(session.getUserID());
-        return true;
+    @Transactional
+    public void logOutAdmin(String userKey) {
+        sessionService.deleteUserSessionByUserKey(userKey);
     }
 }

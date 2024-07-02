@@ -4,51 +4,68 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.travellers_apis.nomadic_bus.commons.NoSessionFoundException;
+import com.travellers_apis.nomadic_bus.commons.UserException;
 import com.travellers_apis.nomadic_bus.dtos.UserSessionDTO;
 import com.travellers_apis.nomadic_bus.models.LoginCredential;
 import com.travellers_apis.nomadic_bus.models.User;
 import com.travellers_apis.nomadic_bus.models.UserSession;
-import com.travellers_apis.nomadic_bus.repositories.UserLoginRepo;
-import com.travellers_apis.nomadic_bus.repositories.UserRepo;
+import com.travellers_apis.nomadic_bus.repositories.UserRepository;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserLoginService {
-    private UserRepo repo;
-    private UserLoginRepo loginRepo;
+    final UserRepository repo;
+    final UserSessionService sessionService;
 
+    @Transactional
     public UserSessionDTO validateUserCredential(LoginCredential credential) {
         if (!SecurityContextHolder.getContext().getAuthentication().isAuthenticated())
             return null;
-        User user = repo.findByEmailAndPassword(credential.getEmail(), credential.getPassword());
+        User user = repo.findByEmailAndPassword(credential.getEmail(), credential.getPassword()).orElse(null);
         if (user == null)
-            return null;
+            throw new UserException("Invalid login credentials.");
         UserSession session = new UserSession();
         session.setUserID(user.getUserID());
         session.setTime(LocalDateTime.now());
         session.setUuid(UUID.randomUUID().toString());
-        loginRepo.save(session);
+        sessionService.createNewSession(session);
         return new UserSessionDTO(session.getUuid());
     }
 
-    public boolean logOutUser(String userKey) {
-        UserSession currentSession = loginRepo.findByUuid(userKey);
-        if (currentSession == null) {
-            return false;
+    @Transactional
+    public void logOutUser(String userKey) {
+        try {
+            UserSession currentSession = sessionService.findSessionByUserKey(userKey);
+            sessionService.deleteUserSession(currentSession.getUserID());
+        } catch (NoSessionFoundException e) {
+            throw new UserException("Session is not found in the system.");
         }
-        loginRepo.deleteByUserID(currentSession.getUserID());
-        return true;
     }
 
+    @Transactional(readOnly = true)
     public User findUserWithUserName(String userName) {
-        User user = repo.findByEmail(userName);
-        if (user == null)
-            throw new UsernameNotFoundException("User with user name: " + userName + " not found in the database.");
-        return user;
+        return repo.findByEmail(userName)
+                .orElseThrow(() -> new UserException("User not found with username: " + userName));
+    }
+
+    @Transactional(readOnly = true)
+    public boolean userExistsWithUserName(String userName) {
+        return repo.findByEmail(userName).isPresent();
+    }
+
+    @Transactional(readOnly = true)
+    public User findUserWithUserId(Long userId) {
+        return repo.findById(userId).orElseThrow(() -> new UserException("Invalid user id"));
+    }
+
+    @Transactional(readOnly = true)
+    public boolean userExistsWithUserId(Long userId) {
+        return repo.findById(userId).isPresent();
     }
 }
