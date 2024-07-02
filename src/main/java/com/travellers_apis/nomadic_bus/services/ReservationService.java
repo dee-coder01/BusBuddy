@@ -4,7 +4,9 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.travellers_apis.nomadic_bus.commons.AdminException;
 import com.travellers_apis.nomadic_bus.commons.BusException;
 import com.travellers_apis.nomadic_bus.commons.NoSessionFoundException;
 import com.travellers_apis.nomadic_bus.commons.ReservationException;
@@ -29,6 +31,7 @@ public class ReservationService {
     final UserSessionService sessionService;
     final UserLoginService loginService;
 
+    @Transactional
     public ReservationResponseDTO addReservation(ReservationDTO dto, String userKey) {
         try {
             UserSession userSession = sessionService.findSessionByUserKey(userKey);
@@ -54,7 +57,12 @@ public class ReservationService {
         }
     }
 
+    @Transactional
     public ReservationResponseDTO cancelReservation(ReservationDTO dto, String userKey) {
+        boolean validUserKey = sessionService.validateUserKey(userKey);
+        if (!validUserKey) {
+            throw new AdminException("User key is not valid, Please provide valid user key.");
+        }
         if (!routeService.isRouteAvailable(dto.getSource(), dto.getDestination()))
             throw new RouteException(
                     "Something went wrong, Please connect with customer support for resolution.");

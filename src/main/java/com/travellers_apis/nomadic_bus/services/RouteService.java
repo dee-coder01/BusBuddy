@@ -12,6 +12,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.travellers_apis.nomadic_bus.commons.AdminException;
 import com.travellers_apis.nomadic_bus.commons.RouteException;
@@ -24,9 +25,11 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class RouteService {
+    private static final String INVALID_USER_KEY = "User key is not correct! Please provide a valid key.";
     private static final Logger logger = LoggerFactory.getLogger(RouteService.class);
     final RouteRepository routeRepository;
     final UserSessionService sessionService;
+    final RouteService service;
 
     public Route shortestRoute(String source, String destination) {
         Map<String, Boolean> visited = new HashMap<>();
@@ -115,8 +118,6 @@ public class RouteService {
             String src = q.remove();
             if (src.equals(destination))
                 break;
-            if (visited.contains(src))
-                continue;
             visited.add(src);
             for (Route route : routeGraph.get(src)) {
                 if (!visited.contains(route.getRouteTo())) {
@@ -127,27 +128,31 @@ public class RouteService {
         }
     }
 
+    @Transactional(readOnly = true)
     public Route getRouteFromSourceToDestination(String source, String destination) {
         return routeRepository.findByRouteFromAndRouteTo(source, destination)
                 .orElseThrow(() -> new RouteException("Route not found."));
     }
 
+    @Transactional(readOnly = true)
     public boolean routeExistsBetweenSourceAndDestination(String source, String destination) {
         return routeRepository.findByRouteFromAndRouteTo(source, destination).isPresent();
     }
 
+    @Transactional
     public Route addRoute(Route route, String key) {
         boolean isValidKey = sessionService.validateUserKey(key);
         if (!isValidKey)
-            throw new AdminException("User key is not correct! Please provide a valid key.");
+            throw new AdminException(INVALID_USER_KEY);
         try {
-            return getRouteFromSourceToDestination(route.getRouteFrom(), route.getRouteTo());
+            return service.getRouteFromSourceToDestination(route.getRouteFrom(), route.getRouteTo());
         } catch (RouteException e) {
             route.setBusList(new ArrayList<>());
             return routeRepository.save(route);
         }
     }
 
+    @Transactional(readOnly = true)
     public List<Route> viewAllRoute() {
         List<Route> routes = routeRepository.findAll();
         if (routes.isEmpty())
@@ -156,15 +161,17 @@ public class RouteService {
             return routes;
     }
 
+    @Transactional(readOnly = true)
     public Route viewRoute(int routeId) {
         return routeRepository.findById(routeId)
                 .orElseThrow(() -> new RouteException("There is no route present of this  routeId :" + routeId));
     }
 
+    @Transactional
     public Route updateRoute(Route route, String key) {
         boolean isValidKey = sessionService.validateUserKey(key);
         if (isValidKey)
-            throw new AdminException("User key is not correct! Please provide a valid key.");
+            throw new AdminException(INVALID_USER_KEY);
         Route presentRoute = routeRepository.findById(route.getRouteID())
                 .orElseThrow(() -> new RouteException("Route doesn't exist of  this routeId : " + route.getRouteID()));
         List<Bus> busList = presentRoute.getBusList();
@@ -174,10 +181,11 @@ public class RouteService {
 
     }
 
+    @Transactional
     public void deleteRoute(int routeID, String key) {
         boolean isValidKey = sessionService.validateUserKey(key);
         if (isValidKey)
-            throw new AdminException("User key is not correct! Please provide a valid key.");
+            throw new AdminException(INVALID_USER_KEY);
         Route existingRoute = routeRepository.findById(routeID)
                 .orElseThrow(() -> new RouteException("Invalid route id."));
         routeRepository.deleteById(existingRoute.getRouteID());

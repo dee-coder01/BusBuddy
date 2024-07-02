@@ -14,11 +14,11 @@ import jakarta.transaction.Transactional;
 
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Integer> {
-    String cancellationQuery = "delete from reservation where booked_seat = :booked_seat and bus_bus_id = :bus_bus_id and journey_date = :journey_date and source = :source and destination = :destination";
+    String CANCELLATION_QUERY = "delete from reservation where booked_seat = :booked_seat and bus_bus_id = :bus_bus_id and journey_date = :journey_date and source = :source and destination = :destination";
 
     @Modifying
     @Transactional
-    @Query(value = cancellationQuery, nativeQuery = true)
+    @Query(value = CANCELLATION_QUERY, nativeQuery = true)
     public void deleteByReservationInfo(@Param("booked_seat") Integer bookedSeat,
             @Param("bus_bus_id") Integer busId, @Param("journey_date") LocalDate journeyDate,
             @Param("source") String source, @Param("destination") String destination);

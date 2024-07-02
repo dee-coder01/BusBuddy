@@ -15,18 +15,18 @@ public class UserSessionService {
     final UserSessionRepository sessionRepository;
 
     @Transactional(readOnly = true)
-    UserSession findSessionByUserId(Long userID) {
+    public UserSession findSessionByUserId(Long userID) {
         return sessionRepository.findByUserID(userID)
                 .orElseThrow(() -> new NoSessionFoundException("Session not found for the user, Please login."));
     }
 
     @Transactional(readOnly = true)
-    boolean validateUserKey(String userKey) {
+    public boolean validateUserKey(String userKey) {
         return sessionRepository.findByUuid(userKey).isPresent();
     }
 
     @Transactional(readOnly = true)
-    UserSession findSessionByUserKey(String userKey) {
+    public UserSession findSessionByUserKey(String userKey) {
         return sessionRepository.findByUuid(userKey)
                 .orElseThrow(() -> new NoSessionFoundException("Invalid user key."));
     }

@@ -29,6 +29,7 @@ public class UserSignUpService {
         }
     }
 
+    @Transactional
     public boolean deleteUser(User userDetails) {
         int users = repository.deleteByEmailAndPassword(userDetails.getEmail(), userDetails.getPassword());
         return users > 0;
