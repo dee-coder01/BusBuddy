@@ -29,7 +29,6 @@ public class RouteService {
     private static final Logger logger = LoggerFactory.getLogger(RouteService.class);
     final RouteRepository routeRepository;
     final UserSessionService sessionService;
-    // final RouteService service;
 
     public Route shortestRoute(String source, String destination) {
         Map<String, Boolean> visited = new HashMap<>();

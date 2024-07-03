@@ -33,25 +33,22 @@ public class BusController {
 
     @PostMapping("/admin")
     public ResponseEntity<Bus> addNewBus(@Valid @RequestBody Bus bus,
-            @RequestParam(required = true, name = "key") String userKey)
-            throws AdminException, BusException {
-        busService.addNewBus(bus, userKey);
+            @RequestParam(required = true, name = "key") String adminKey) {
+        busService.addNewBus(bus, adminKey);
         return ResponseEntity.accepted().body(bus);
     }
 
     @PutMapping("/admin")
     public ResponseEntity<Bus> updateBusEntity(@Valid @RequestBody Bus bus,
-            @RequestParam(required = true, name = "key") String userKey)
-            throws AdminException, BusException, RouteException {
-        Bus updatedBus = busService.updateBusInfo(bus, userKey);
+            @RequestParam(required = true, name = "key") String adminKey) {
+        Bus updatedBus = busService.updateBusInfo(bus, adminKey);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(updatedBus);
     }
 
     @DeleteMapping("/admin/{busId}")
     public ResponseEntity<Bus> deleteBusEntity(@PathVariable("busId") Integer busId,
-            @RequestParam(required = true, name = "key") String userKey)
-            throws AdminException, BusException, RouteException {
-        Bus deletedBus = busService.deleteBusInfo(busId, userKey);
+            @RequestParam(required = true, name = "key") String adminKey) {
+        Bus deletedBus = busService.deleteBusInfo(busId, adminKey);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(deletedBus);
     }
 
@@ -61,13 +58,12 @@ public class BusController {
     }
 
     @GetMapping("/{busId}")
-    public ResponseEntity<Bus> getBusInfo(@PathVariable(name = "busId") Integer busId) throws BusException {
+    public ResponseEntity<Bus> getBusInfo(@PathVariable(name = "busId") Integer busId) {
         return ResponseEntity.status(HttpStatus.OK).body(busService.getBusInfo(busId));
     }
 
     @GetMapping("/type/{busType}")
-    public ResponseEntity<Set<Bus>> getBusesByBusTypeHandler(@PathVariable("busType") String busType)
-            throws BusException {
+    public ResponseEntity<Set<Bus>> getBusesByBusTypeHandler(@PathVariable("busType") String busType) {
         Set<Bus> busList = busService.findAllBusByBusType(busType);
         return ResponseEntity.status(HttpStatus.OK).body(busList);
     }

@@ -28,12 +28,12 @@ public class AdminLoginController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logOutAdminEntity(@RequestParam(required = true) String key) {
+    public ResponseEntity<String> logOutAdminEntity(@RequestParam(name = "key") String key) {
         if (key == null) {
-            return ResponseEntity.badRequest().body("User is not logged in.");
+            return ResponseEntity.ok().body("User is not logged in.");
         }
         service.logOutAdmin(key);
-        return ResponseEntity.ok().body("User logout successful.");
+        return ResponseEntity.accepted().body("User logout successful.");
     }
 
 }
