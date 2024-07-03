@@ -8,10 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import com.travellers_apis.nomadic_bus.commons.AdminException;
-import com.travellers_apis.nomadic_bus.commons.BusException;
-import com.travellers_apis.nomadic_bus.commons.RouteException;
 import com.travellers_apis.nomadic_bus.models.Bus;
 import com.travellers_apis.nomadic_bus.services.BusService;
 
