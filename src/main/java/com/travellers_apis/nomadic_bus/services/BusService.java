@@ -13,7 +13,6 @@ import com.travellers_apis.nomadic_bus.models.Bus;
 import com.travellers_apis.nomadic_bus.models.Route;
 import com.travellers_apis.nomadic_bus.repositories.BusRepository;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -25,8 +24,8 @@ public class BusService {
     final RouteService routeService;
 
     @Transactional
-    public Bus addNewBus(Bus bus, String userKey) {
-        boolean isValidKey = sessionService.validateUserKey(userKey);
+    public Bus addNewBus(Bus bus, String adminKey) {
+        boolean isValidKey = sessionService.validateUserKey(adminKey);
         if (!isValidKey) {
             throw new AdminException(INVALID_USER_KEY);
         }
@@ -40,22 +39,22 @@ public class BusService {
     }
 
     @Transactional
-    public Bus updateBusInfo(Bus bus, String userKey) {
-        boolean isValidKey = sessionService.validateUserKey(userKey);
+    public Bus updateBusInfo(Bus bus, String adminKey) {
+        boolean isValidKey = sessionService.validateUserKey(adminKey);
         if (!isValidKey) {
             throw new AdminException(INVALID_USER_KEY);
         }
         if (!(busRepository.findById(bus.getBusId()).isPresent())) {
             throw new BusException("Bus not found in the system.");
         }
-        Route route = routeService.addRoute(bus.getRoute(), userKey);
+        Route route = routeService.addRoute(bus.getRoute(), adminKey);
         bus.setRoute(route);
         return busRepository.save(bus);
     }
 
     @Transactional
-    public Bus deleteBusInfo(@Valid Integer busId, String userKey) {
-        boolean isValidKey = sessionService.validateUserKey(userKey);
+    public Bus deleteBusInfo(Integer busId, String adminKey) {
+        boolean isValidKey = sessionService.validateUserKey(adminKey);
         if (!isValidKey) {
             throw new AdminException(INVALID_USER_KEY);
         }

@@ -10,6 +10,7 @@ import com.travellers_apis.nomadic_bus.models.User;
 import com.travellers_apis.nomadic_bus.services.UserLoginService;
 import com.travellers_apis.nomadic_bus.services.UserSignUpService;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 import org.springframework.http.HttpStatus;
@@ -36,7 +37,7 @@ public class UserController {
     }
 
     @GetMapping("/logout")
-    public ResponseEntity<String> logoutUser(@RequestParam(required = true) String userKey) {
+    public ResponseEntity<String> logoutUser(@RequestParam(required = true, name = "key") String userKey) {
         try {
             service.logOutUser(userKey);
             return ResponseEntity.status(HttpStatus.OK).body("Log out successful.");
@@ -46,7 +47,7 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<String> signUpUser(@RequestBody User userDetails) {
+    public ResponseEntity<String> signUpUser(@Valid @RequestBody User userDetails) {
         return signUpService.userSignUp(userDetails) ? ResponseEntity.accepted().body("Successful")
                 : ResponseEntity.badRequest().body("failure");
     }

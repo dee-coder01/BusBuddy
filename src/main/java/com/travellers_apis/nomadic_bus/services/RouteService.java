@@ -29,7 +29,6 @@ public class RouteService {
     private static final Logger logger = LoggerFactory.getLogger(RouteService.class);
     final RouteRepository routeRepository;
     final UserSessionService sessionService;
-    final RouteService service;
 
     public Route shortestRoute(String source, String destination) {
         Map<String, Boolean> visited = new HashMap<>();
@@ -145,7 +144,7 @@ public class RouteService {
         if (!isValidKey)
             throw new AdminException(INVALID_USER_KEY);
         try {
-            return service.getRouteFromSourceToDestination(route.getRouteFrom(), route.getRouteTo());
+            return getRouteFromSourceToDestination(route.getRouteFrom(), route.getRouteTo());
         } catch (RouteException e) {
             route.setBusList(new ArrayList<>());
             return routeRepository.save(route);

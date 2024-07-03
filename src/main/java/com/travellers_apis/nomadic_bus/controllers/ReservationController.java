@@ -28,14 +28,14 @@ public class ReservationController {
 
     @PostMapping("/")
     public ReservationResponseDTO postMethodName(@Valid @RequestBody ReservationDTO dto,
-            @RequestParam(required = true) String userKey)
+            @RequestParam(required = true, name = "key") String userKey)
             throws UserLoginException, RouteException, BusException, ReservationException {
         return service.addReservation(dto, userKey);
     }
 
     @DeleteMapping("/")
     public ReservationResponseDTO cancelReservation(@Valid @RequestBody ReservationDTO dto,
-            @RequestParam(required = true) String userKey)
+            @RequestParam(required = true, name = "key") String userKey)
             throws UserLoginException, RouteException, BusException {
         return service.cancelReservation(dto, userKey);
     }

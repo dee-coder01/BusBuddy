@@ -3,10 +3,10 @@ package com.travellers_apis.nomadic_bus.services;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.travellers_apis.nomadic_bus.commons.AdminException;
 import com.travellers_apis.nomadic_bus.models.Admin;
 import com.travellers_apis.nomadic_bus.models.LoginCredential;
 import com.travellers_apis.nomadic_bus.models.UserSession;
@@ -23,7 +23,7 @@ public class AdminLoginService {
     @Transactional
     public UserSession validateAdminCredential(LoginCredential credential) {
         Admin admin = repo.findByEmailAndPassword(credential.getEmail(), credential.getPassword())
-                .orElseThrow(() -> new BadCredentialsException("Check your credential."));
+                .orElseThrow(() -> new AdminException("Check your credential."));
         UserSession session = new UserSession();
         session.setUserID(admin.getId());
         session.setTime(LocalDateTime.now());
