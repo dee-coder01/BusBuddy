@@ -4,8 +4,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.travellers_apis.nomadic_bus.commons.UserException;
-import com.travellers_apis.nomadic_bus.dtos.UserSessionDTO;
-import com.travellers_apis.nomadic_bus.models.LoginCredential;
 import com.travellers_apis.nomadic_bus.models.User;
 import com.travellers_apis.nomadic_bus.services.UserLoginService;
 import com.travellers_apis.nomadic_bus.services.UserSignUpService;
@@ -30,10 +28,10 @@ public class UserController {
     private UserSignUpService signUpService;
 
     @PostMapping("/login")
-    public ResponseEntity<UserSessionDTO> userLogin() {
-        LoginCredential loginCredential = (LoginCredential) SecurityContextHolder.getContext().getAuthentication()
-                .getPrincipal();
-        return ResponseEntity.accepted().body(service.validateUserCredential(loginCredential));
+    public ResponseEntity<String> userLogin() {
+        System.out.println("getting the call");
+        String userName = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return ResponseEntity.accepted().body(service.validateUserCredential(userName));
     }
 
     @GetMapping("/logout")
