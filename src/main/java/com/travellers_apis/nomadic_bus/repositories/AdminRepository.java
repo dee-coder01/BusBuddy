@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 import com.travellers_apis.nomadic_bus.models.Admin;
 
 @Repository
-public interface AdminRepo extends JpaRepository<Admin, Long> {
+public interface AdminRepository extends JpaRepository<Admin, Long> {
     Optional<Admin> findByEmailAndPassword(String email, String password);
 }
