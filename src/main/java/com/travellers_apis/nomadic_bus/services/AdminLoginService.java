@@ -10,20 +10,19 @@ import com.travellers_apis.nomadic_bus.commons.AdminException;
 import com.travellers_apis.nomadic_bus.models.Admin;
 import com.travellers_apis.nomadic_bus.models.LoginCredential;
 import com.travellers_apis.nomadic_bus.models.UserSession;
-import com.travellers_apis.nomadic_bus.repositories.AdminRepo;
+import com.travellers_apis.nomadic_bus.repositories.AdminRepository;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class AdminLoginService {
-    final AdminRepo repo;
+    final AdminRepository repo;
     final UserSessionService sessionService;
 
     @Transactional
-    public UserSession validateAdminCredential(LoginCredential credential) {
-        Admin admin = repo.findByEmailAndPassword(credential.getEmail(), credential.getPassword())
-                .orElseThrow(() -> new AdminException("Check your credential."));
+    public UserSession createAdminSession(LoginCredential credential) {
+        Admin admin = findAdminByEmailAndPassword(credential);
         UserSession session = new UserSession();
         session.setUserID(admin.getId());
         session.setTime(LocalDateTime.now());
@@ -35,5 +34,11 @@ public class AdminLoginService {
     @Transactional
     public void logOutAdmin(String userKey) {
         sessionService.deleteUserSessionByUserKey(userKey);
+    }
+
+    @Transactional(readOnly = true)
+    public Admin findAdminByEmailAndPassword(LoginCredential credential) {
+        return repo.findByEmailAndPassword(credential.getEmail(), credential.getPassword())
+                .orElseThrow(() -> new AdminException("Check your credential."));
     }
 }

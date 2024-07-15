@@ -23,7 +23,7 @@ public class AdminLoginController {
 
     @PostMapping("/login")
     public ResponseEntity<UserSession> getMethodName(@Valid @RequestBody LoginCredential admin) {
-        UserSession session = service.validateAdminCredential(admin);
+        UserSession session = service.createAdminSession(admin);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(session);
     }
 

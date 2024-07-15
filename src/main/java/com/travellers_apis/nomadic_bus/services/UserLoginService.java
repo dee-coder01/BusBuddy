@@ -22,15 +22,12 @@ public class UserLoginService {
 
     @Transactional
     public String validateUserCredential(String userName) {
-        System.out.println(userName);
         User user = repository.findByEmail(userName).orElseThrow(() -> new UserException("Invalid login credentials."));
         UserSession session = new UserSession();
         session.setUserID(user.getUserID());
         session.setTime(LocalDateTime.now());
         session.setUuid(UUID.randomUUID().toString());
-        sessionService.createNewSession(session);
-        System.out.println(session.toString());
-        return session.getUuid();
+        return sessionService.createNewSession(session).getUuid();
     }
 
     @Transactional
