@@ -5,10 +5,10 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 
-public class CustomAuthenticationManager implements AuthenticationManager {
-    private CustomAuthenticationProvider provider;
+public class BasicAuthenticationManager implements AuthenticationManager {
+    private FormLoginAuthenticationProvider provider;
 
-    public CustomAuthenticationManager(CustomAuthenticationProvider provider) {
+    public BasicAuthenticationManager(FormLoginAuthenticationProvider provider) {
         this.provider = provider;
     }
 

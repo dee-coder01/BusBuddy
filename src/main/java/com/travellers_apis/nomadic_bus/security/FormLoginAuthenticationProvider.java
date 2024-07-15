@@ -9,14 +9,13 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.travellers_apis.nomadic_bus.models.LoginCredential;
-
-public class CustomAuthenticationProvider implements AuthenticationProvider {
+public class FormLoginAuthenticationProvider implements AuthenticationProvider {
 
     CustomUserDetailsManager userDetailsManager;
     PasswordEncoder passwordEncoder;
 
-    public CustomAuthenticationProvider(PasswordEncoder passwordEncoder, CustomUserDetailsManager userDetailsManager) {
+    public FormLoginAuthenticationProvider(PasswordEncoder passwordEncoder,
+            CustomUserDetailsManager userDetailsManager) {
         this.passwordEncoder = passwordEncoder;
         this.userDetailsManager = userDetailsManager;
     }
@@ -24,12 +23,12 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         UserDetails userDetails = userDetailsManager
-                .loadUserByUsername(((LoginCredential) authentication.getPrincipal()).getEmail());
-        if (!passwordEncoder.matches((((LoginCredential) authentication.getPrincipal()).getPassword()),
+                .loadUserByUsername((String) authentication.getPrincipal());
+        if (!passwordEncoder.matches(((String) authentication.getCredentials()),
                 userDetails.getPassword()))
             throw new BadCredentialsException("Invalid password.");
-        LoginCredential loginCredential = new LoginCredential(userDetails.getUsername(), userDetails.getPassword());
-        return new CustomAuthenticationToken(loginCredential, null, List.of(() -> "Read"));
+        return new CustomAuthenticationToken(userDetails.getUsername(), userDetails.getPassword(),
+                List.of(() -> "Read"));
     }
 
     @Override

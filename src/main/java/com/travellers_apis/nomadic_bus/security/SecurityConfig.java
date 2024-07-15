@@ -22,13 +22,13 @@ public class SecurityConfig {
     private String[] publicUrls;
 
     @Bean
-    CustomSecurityFilter securityFilterChain(CustomAuthenticationManager manager) {
-        return new CustomSecurityFilter(manager, new AntPathRequestMatcher("/user/login", "POST"));
+    BasicLoginFilter securityFilterChain(BasicAuthenticationManager manager) {
+        return new BasicLoginFilter(manager, new AntPathRequestMatcher("/user/login", "POST"));
     }
 
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http, CustomSecurityFilter filter, CustomAuthenticationManager manager,
-            CustomAuthenticationProvider provider) throws Exception {
+    SecurityFilterChain filterChain(HttpSecurity http, BasicLoginFilter filter, BasicAuthenticationManager manager,
+            FormLoginAuthenticationProvider provider) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(
@@ -43,13 +43,13 @@ public class SecurityConfig {
     }
 
     @Bean
-    CustomAuthenticationProvider authenticationProvider(PasswordEncoder encoder, CustomUserDetailsManager manager) {
-        return new CustomAuthenticationProvider(encoder, manager);
+    FormLoginAuthenticationProvider authenticationProvider(PasswordEncoder encoder, CustomUserDetailsManager manager) {
+        return new FormLoginAuthenticationProvider(encoder, manager);
     }
 
     @Bean
-    CustomAuthenticationManager authenticationManager(CustomAuthenticationProvider provider) {
-        return new CustomAuthenticationManager(provider);
+    BasicAuthenticationManager authenticationManager(FormLoginAuthenticationProvider provider) {
+        return new BasicAuthenticationManager(provider);
     }
 
     @Bean
