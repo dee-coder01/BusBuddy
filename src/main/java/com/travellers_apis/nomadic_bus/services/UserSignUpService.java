@@ -1,6 +1,5 @@
 package com.travellers_apis.nomadic_bus.services;
 
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,14 +18,12 @@ public class UserSignUpService {
 
     @Transactional
     public boolean userSignUp(User userDetails) {
-        try {
-            userLoginService.findUserWithUserName(userDetails.getEmail());
+        if (userLoginService.findUserWithUserName(userDetails.getEmail()) != null) {
             return false;
-        } catch (UsernameNotFoundException e) {
-            userDetails.setPassword(passwordEncoder.encode(userDetails.getPassword()));
-            repository.save(userDetails);
-            return true;
         }
+        userDetails.setPassword(passwordEncoder.encode(userDetails.getPassword()));
+        repository.save(userDetails);
+        return true;
     }
 
     @Transactional

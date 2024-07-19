@@ -10,4 +10,6 @@ import com.travellers_apis.nomadic_bus.models.Admin;
 @Repository
 public interface AdminRepository extends JpaRepository<Admin, Long> {
     Optional<Admin> findByEmailAndPassword(String email, String password);
+
+    Optional<Admin> findByEmail(String email);
 }

@@ -31,7 +31,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long userID;
+    private Long id;
 
     @NotNull(message = "Name cannot be null!")
     @NotBlank(message = "Name cannot be blank!")

@@ -10,11 +10,11 @@ import com.travellers_apis.nomadic_bus.models.UserSession;
 @Repository
 public interface UserSessionRepository extends JpaRepository<UserSession, Long> {
 
-    boolean deleteByUserID(Long userID);
+    boolean deleteByUserId(Long userID);
 
     boolean deleteByUuid(String userKey);
 
-    Optional<UserSession> findByUserID(Long userID);
+    Optional<UserSession> findByUserId(Long userID);
 
     Optional<UserSession> findByUuid(String userKey);
 }

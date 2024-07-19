@@ -9,8 +9,6 @@ import com.travellers_apis.nomadic_bus.models.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByUserID(Long id);
-
     Optional<User> findByEmailAndPassword(String email, String password);
 
     int deleteByEmailAndPassword(String email, String password);

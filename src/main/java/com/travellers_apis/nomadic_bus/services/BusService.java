@@ -7,7 +7,6 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.travellers_apis.nomadic_bus.commons.AdminException;
 import com.travellers_apis.nomadic_bus.commons.BusException;
 import com.travellers_apis.nomadic_bus.models.Bus;
 import com.travellers_apis.nomadic_bus.models.Route;
@@ -18,20 +17,19 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class BusService {
-    private static final String INVALID_USER_KEY = "User key is not valid, Please provide a valid key.";
     final BusRepository busRepository;
     final UserSessionService sessionService;
     final RouteService routeService;
 
     @Transactional
     public Bus addNewBus(Bus bus, String adminKey) {
-        boolean isValidKey = sessionService.validateUserKey(adminKey);
-        if (!isValidKey) {
-            throw new AdminException(INVALID_USER_KEY);
-        }
         if (bus.getRouteFrom().equals(bus.getRouteTo()))
             throw new BusException("Journey start and destination can't be same.");
         Route route = new Route(bus.getRouteFrom(), bus.getRouteTo(), bus.getRoute().getDistance());
+        if (routeService.isRouteAvailable(bus.getRouteFrom(), bus.getRouteTo())) {
+            route = routeService.getRouteFromSourceToDestination(bus.getRouteFrom(), bus.getRouteTo());
+        }
+        routeService.addRoute(route);
         bus.setRoute(route);
         route.getBusList().add(bus);
         busRepository.save(bus);
@@ -39,25 +37,17 @@ public class BusService {
     }
 
     @Transactional
-    public Bus updateBusInfo(Bus bus, String adminKey) {
-        boolean isValidKey = sessionService.validateUserKey(adminKey);
-        if (!isValidKey) {
-            throw new AdminException(INVALID_USER_KEY);
-        }
+    public Bus updateBusInfo(Bus bus) {
         if (!(busRepository.findById(bus.getBusId()).isPresent())) {
             throw new BusException("Bus not found in the system.");
         }
-        Route route = routeService.addRoute(bus.getRoute(), adminKey);
+        Route route = routeService.addRoute(bus.getRoute());
         bus.setRoute(route);
         return busRepository.save(bus);
     }
 
     @Transactional
-    public Bus deleteBusInfo(Integer busId, String adminKey) {
-        boolean isValidKey = sessionService.validateUserKey(adminKey);
-        if (!isValidKey) {
-            throw new AdminException(INVALID_USER_KEY);
-        }
+    public Bus deleteBusInfo(Integer busId) {
         Bus existingBus = busRepository.findById(busId)
                 .orElseThrow(() -> new BusException("Bus not found with busId: " + busId));
         if (LocalDate.now().isBefore(existingBus.getBusJourneyDate())

@@ -6,29 +6,43 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 public class FormLoginAuthenticationProvider implements AuthenticationProvider {
 
-    CustomUserDetailsManager userDetailsManager;
-    PasswordEncoder passwordEncoder;
-
-    public FormLoginAuthenticationProvider(PasswordEncoder passwordEncoder,
-            CustomUserDetailsManager userDetailsManager) {
-        this.passwordEncoder = passwordEncoder;
-        this.userDetailsManager = userDetailsManager;
-    }
+    final CustomUserDetailsManager userDetailsManager;
+    final AdminDetailsManager adminDetailsManager;
+    final PasswordEncoder passwordEncoder;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        UserDetails userDetails = userDetailsManager
-                .loadUserByUsername((String) authentication.getPrincipal());
-        if (!passwordEncoder.matches(((String) authentication.getCredentials()),
-                userDetails.getPassword()))
-            throw new BadCredentialsException("Invalid password.");
-        return new CustomAuthenticationToken(userDetails.getUsername(), userDetails.getPassword(),
-                List.of(() -> "Read"));
+        System.out.println(authentication.getAuthorities() + "||" + UserRoles.USER.toString());
+        if (authentication.getAuthorities().contains(new SimpleGrantedAuthority(UserRoles.USER.toString()))) {
+            UserDetails userDetails = userDetailsManager
+                    .loadUserByUsername((String) authentication.getPrincipal());
+            if (userDetails == null)
+                throw new BadCredentialsException("User not found in the system.");
+            if (!passwordEncoder.matches(((String) authentication.getCredentials()),
+                    userDetails.getPassword()))
+                throw new BadCredentialsException("Invalid password.");
+            return new CustomAuthenticationToken(userDetails.getUsername(), userDetails.getPassword(),
+                    List.of(new SimpleGrantedAuthority(UserRoles.USER.toString())));
+        } else {
+            AdminDetails userDetails = adminDetailsManager
+                    .loadUserByUsername((String) authentication.getPrincipal());
+            if (userDetails == null)
+                throw new BadCredentialsException("User not found in the system.");
+            if (!passwordEncoder.matches(((String) authentication.getCredentials()),
+                    userDetails.getPassword()))
+                throw new BadCredentialsException("Invalid password.");
+            return new CustomAuthenticationToken(userDetails.getUsername(), userDetails.getPassword(),
+                    List.of(new SimpleGrantedAuthority(UserRoles.ADMIN.toString())));
+        }
     }
 
     @Override

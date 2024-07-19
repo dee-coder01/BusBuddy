@@ -12,15 +12,14 @@ import lombok.Data;
 
 @Data
 @Entity
-public class UserSession {
-
+public class AdminSession {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne()
     @JoinColumn(name = "user_id")
-    private User user;
+    private Admin admin;
     private String uuid;
     private LocalDateTime time;
 }

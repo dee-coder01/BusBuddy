@@ -4,6 +4,16 @@
             "name": "security.public-urls",
             "type": "java.lang.String",
             "description": "security.public-urls are the list of all the public APIs"
+        },
+        {
+            "name": "security.admin-urls",
+            "type": "java.lang.String",
+            "description": "security.admin-urls are the list of all the admin specific urls."
+        },
+        {
+            "name": "security.user-urls",
+            "type": "java.lang.String",
+            "description": "security.user-urls are the list of all the user specific urls."
         }
     ]
 }
