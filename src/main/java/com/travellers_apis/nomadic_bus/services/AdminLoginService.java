@@ -23,7 +23,6 @@ public class AdminLoginService {
     @Transactional
     public AdminSession createAdminSession(String adminName) {
         Admin admin = repo.findByEmail(adminName).orElse(null);
-        System.out.println(admin);
         AdminSession session = new AdminSession();
         session.setAdmin(admin);
         session.setTime(LocalDateTime.now());

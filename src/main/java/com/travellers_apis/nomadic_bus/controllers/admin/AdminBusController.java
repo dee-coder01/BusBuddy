@@ -27,8 +27,6 @@ public class AdminBusController {
     @PostMapping("/bus")
     public ResponseEntity<Bus> addNewBus(@Valid @RequestBody Bus bus,
             @RequestParam(required = true, name = "key") String adminKey) {
-        System.out.println(SecurityContextHolder.getContext().getAuthentication());
-        System.out.println(bus);
         busService.addNewBus(bus, adminKey);
         return ResponseEntity.accepted().body(bus);
     }

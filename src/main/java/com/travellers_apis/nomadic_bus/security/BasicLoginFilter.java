@@ -47,7 +47,6 @@ public class BasicLoginFilter implements Filter {
                 Authentication userAuthObj = manager.authenticate(userToken);
                 if (!userAuthObj.isAuthenticated())
                     throw new UserLoginException("Failed to authenticate the user.");
-                System.out.println(userAuthObj);
                 SecurityContextHolder.getContext().setAuthentication(userAuthObj);
             } catch (AuthenticationException e) {
                 res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

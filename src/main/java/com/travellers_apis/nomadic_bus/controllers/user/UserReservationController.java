@@ -30,7 +30,6 @@ public class UserReservationController {
     public ReservationResponseDTO postMethodName(@Valid @RequestBody ReservationDTO dto,
             @RequestParam(required = true, name = "key") String userKey)
             throws UserLoginException, RouteException, BusException, ReservationException {
-        System.out.println("Got request to controller");
         return service.addReservation(dto, userKey);
     }
 

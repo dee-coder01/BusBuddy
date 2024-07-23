@@ -43,7 +43,6 @@ public class AdminSessionService {
 
     @Transactional
     public AdminSession createNewSession(AdminSession session) {
-        System.out.println(session);
         return sessionRepository.save(session);
     }
 }

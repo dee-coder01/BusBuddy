@@ -32,8 +32,6 @@ public class AuthenticationKeyLoginFilter extends OncePerRequestFilter {
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
             authentication.setAuthenticated(true);
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            System.out.println("AuthenticationKeyLoginFilter: Authentication set: "
-                    + SecurityContextHolder.getContext().getAuthentication());
         }
         filterChain.doFilter(request, response);
     }

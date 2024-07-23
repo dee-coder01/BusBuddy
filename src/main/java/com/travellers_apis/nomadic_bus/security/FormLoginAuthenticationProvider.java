@@ -21,7 +21,6 @@ public class FormLoginAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        System.out.println(authentication.getAuthorities() + "||" + UserRoles.USER.toString());
         if (authentication.getAuthorities().contains(new SimpleGrantedAuthority(UserRoles.USER.toString()))) {
             UserDetails userDetails = userDetailsManager
                     .loadUserByUsername((String) authentication.getPrincipal());
