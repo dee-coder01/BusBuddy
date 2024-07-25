@@ -7,7 +7,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,8 +28,6 @@ public class Admin {
     private String email;
 
     @NotNull(message = "Password can't be null")
-    // @Pattern(regexp = "[A-Za-z0-9!@#$]{8,15}", message = "Password must Contain
-    // 'A-Z', 'a-z', '0-9' and one of these'!@#$%^&*_'.")
     private String password;
     @Size(min = 10, max = 10, message = "Phone number should have 10 digits")
     private String mobile;

@@ -2,7 +2,6 @@ package com.travellers_apis.nomadic_bus.controllers.admin;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,7 +37,7 @@ public class AdminBusController {
     }
 
     @DeleteMapping("/bus/{busId}")
-    public ResponseEntity<Bus> deleteBusEntity(@PathVariable("busId") Integer busId) {
+    public ResponseEntity<Bus> deleteBusEntity(@PathVariable Integer busId) {
         Bus deletedBus = busService.deleteBusInfo(busId);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(deletedBus);
     }
