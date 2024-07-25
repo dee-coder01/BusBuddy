@@ -1,4 +1,4 @@
-package com.travellers_apis.nomadic_bus.controllers;
+package com.travellers_apis.nomadic_bus.controllers.user;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,20 +20,20 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
-@RequestMapping("/user/reservation")
+@RequestMapping("/user")
 @AllArgsConstructor
-public class ReservationController {
+public class UserReservationController {
 
     private ReservationService service;
 
-    @PostMapping("/")
+    @PostMapping("/reservation")
     public ReservationResponseDTO postMethodName(@Valid @RequestBody ReservationDTO dto,
             @RequestParam(required = true, name = "key") String userKey)
             throws UserLoginException, RouteException, BusException, ReservationException {
         return service.addReservation(dto, userKey);
     }
 
-    @DeleteMapping("/")
+    @DeleteMapping("/reservation")
     public ReservationResponseDTO cancelReservation(@Valid @RequestBody ReservationDTO dto,
             @RequestParam(required = true, name = "key") String userKey)
             throws UserLoginException, RouteException, BusException {

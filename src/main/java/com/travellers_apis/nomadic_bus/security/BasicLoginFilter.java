@@ -2,9 +2,11 @@ package com.travellers_apis.nomadic_bus.security;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.util.ContentCachingRequestWrapper;
@@ -40,17 +42,17 @@ public class BasicLoginFilter implements Filter {
                         LoginCredential.class);
 
                 CustomAuthenticationToken userToken = new CustomAuthenticationToken(loginCredential.getEmail(),
-                        loginCredential.getPassword());
+                        loginCredential.getPassword(),
+                        List.of(new SimpleGrantedAuthority(loginCredential.getRole().toString())));
                 Authentication userAuthObj = manager.authenticate(userToken);
                 if (!userAuthObj.isAuthenticated())
                     throw new UserLoginException("Failed to authenticate the user.");
-
                 SecurityContextHolder.getContext().setAuthentication(userAuthObj);
             } catch (AuthenticationException e) {
                 res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 res.setContentType("application/json");
                 PrintWriter writer = res.getWriter();
-                writer.write("{\"error\": \"Invalid login request\"}");
+                writer.write("{\"error\": " + "\"Invalid login request: " + e.getMessage() + "\"}");
                 writer.flush();
                 return;
             }

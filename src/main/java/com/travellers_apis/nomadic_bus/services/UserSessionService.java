@@ -16,7 +16,7 @@ public class UserSessionService {
 
     @Transactional(readOnly = true)
     public UserSession findSessionByUserId(Long userID) {
-        return sessionRepository.findByUserID(userID)
+        return sessionRepository.findByUserId(userID)
                 .orElseThrow(() -> new NoSessionFoundException("Session not found for the user, Please login."));
     }
 
@@ -32,8 +32,8 @@ public class UserSessionService {
     }
 
     @Transactional
-    public boolean deleteUserSession(Long userId) {
-        return sessionRepository.deleteByUserID(userId);
+    public void deleteUserSession(Long userId) {
+        sessionRepository.deleteById(userId);
     }
 
     @Transactional

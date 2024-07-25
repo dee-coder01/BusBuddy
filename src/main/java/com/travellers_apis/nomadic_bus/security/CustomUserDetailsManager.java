@@ -22,6 +22,8 @@ public class CustomUserDetailsManager implements UserDetailsManager {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = loginService.findUserWithUserName(username);
+        if (user == null)
+            return null;
         return generateCustomUserDetails(user);
     }
 

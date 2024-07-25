@@ -1,4 +1,4 @@
-package com.travellers_apis.nomadic_bus.controllers;
+package com.travellers_apis.nomadic_bus.controllers.user;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,7 +29,6 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<String> userLogin() {
-        System.out.println("getting the call");
         String userName = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ResponseEntity.accepted().body(service.validateUserCredential(userName));
     }

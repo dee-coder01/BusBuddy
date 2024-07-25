@@ -35,7 +35,7 @@ public class ReservationService {
     public ReservationResponseDTO addReservation(ReservationDTO dto, String userKey) {
         try {
             UserSession userSession = sessionService.findSessionByUserKey(userKey);
-            User user = loginService.findUserWithUserId(userSession.getUserID());
+            User user = loginService.findUserWithUserId(userSession.getUser().getId());
             if (!routeService.isRouteAvailable(dto.getSource(), dto.getDestination()))
                 throw new RouteException(
                         "Route is not available from " + dto.getSource() + " to " + dto.getDestination() + ".");

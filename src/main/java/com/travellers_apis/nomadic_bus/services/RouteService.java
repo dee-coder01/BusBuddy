@@ -139,10 +139,10 @@ public class RouteService {
     }
 
     @Transactional
-    public Route addRoute(Route route, String key) {
-        boolean isValidKey = sessionService.validateUserKey(key);
-        if (!isValidKey)
-            throw new AdminException(INVALID_USER_KEY);
+    public Route addRoute(Route route) {
+        // boolean isValidKey = sessionService.validateUserKey(key);
+        // if (!isValidKey)
+        // throw new AdminException(INVALID_USER_KEY);
         try {
             return getRouteFromSourceToDestination(route.getRouteFrom(), route.getRouteTo());
         } catch (RouteException e) {

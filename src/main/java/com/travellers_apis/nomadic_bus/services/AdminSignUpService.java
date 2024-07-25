@@ -1,5 +1,6 @@
 package com.travellers_apis.nomadic_bus.services;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.travellers_apis.nomadic_bus.commons.AdminException;
@@ -13,9 +14,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AdminSignUpService {
     final AdminRepository repository;
+    final PasswordEncoder passwordEncoder;
 
     @Transactional
     public Admin addNewAdmin(Admin admin) throws AdminException {
+        admin.setPassword(passwordEncoder.encode(admin.getPassword()));
         return repository.save(admin);
     }
 }

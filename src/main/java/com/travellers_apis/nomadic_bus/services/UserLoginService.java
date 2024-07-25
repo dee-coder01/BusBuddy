@@ -24,7 +24,7 @@ public class UserLoginService {
     public String validateUserCredential(String userName) {
         User user = repository.findByEmail(userName).orElseThrow(() -> new UserException("Invalid login credentials."));
         UserSession session = new UserSession();
-        session.setUserID(user.getUserID());
+        session.setUser(user);
         session.setTime(LocalDateTime.now());
         session.setUuid(UUID.randomUUID().toString());
         return sessionService.createNewSession(session).getUuid();
@@ -34,7 +34,7 @@ public class UserLoginService {
     public void logOutUser(String userKey) {
         try {
             UserSession currentSession = sessionService.findSessionByUserKey(userKey);
-            sessionService.deleteUserSession(currentSession.getUserID());
+            sessionService.deleteUserSession(currentSession.getUser().getId());
         } catch (NoSessionFoundException e) {
             throw new UserException("Session is not found in the system.");
         }
@@ -42,8 +42,7 @@ public class UserLoginService {
 
     @Transactional(readOnly = true)
     public User findUserWithUserName(String userName) {
-        return repository.findByEmail(userName)
-                .orElseThrow(() -> new UserException("User not found with username: " + userName));
+        return repository.findByEmail(userName).orElse(null);
     }
 
     @Transactional(readOnly = true)
@@ -53,7 +52,7 @@ public class UserLoginService {
 
     @Transactional(readOnly = true)
     public User findUserWithUserId(Long userId) {
-        return repository.findById(userId).orElseThrow(() -> new UserException("Invalid user id"));
+        return repository.findById(userId).orElse(null);
     }
 
     @Transactional(readOnly = true)
