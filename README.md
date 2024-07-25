@@ -16,7 +16,9 @@ BusBuddy is a Spring Boot application designed to manage and facilitate bus tran
 
 | Endpoint          | Method |    Description    | Access |
 | :---------------- | :----: | :---------------: | :----: |
-| `/admin/register` |  POST  | Register as admin | Public |
+| `/admin/signup` |  POST  | Register as admin | Public |
+| `/admin/login` |  POST  | Register as admin | Public |
+| `/admin/logout` |  POST  | Register as admin | Public |
 
 ### AdminLoginController
 
