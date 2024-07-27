@@ -1,5 +1,7 @@
 package com.travellers_apis.nomadic_bus.security;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -55,16 +57,17 @@ public class SecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity http, BasicLoginFilter filter,
             @Qualifier("AdminLoginFilter") AuthenticationKeyLoginFilter adminKeyLoginFilter,
             @Qualifier("UserLoginFilter") AuthenticationKeyLoginFilter userKeyLoginFilter) throws Exception {
+        System.out.println(Arrays.toString(publicUrls));
         return http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(
                         req -> req
+                                .requestMatchers(publicUrls)
+                                .permitAll()
                                 .requestMatchers(adminUrls)
                                 .hasAuthority(UserRoles.ADMIN.toString())
                                 .requestMatchers(userUrls)
                                 .hasAuthority(UserRoles.USER.toString())
-                                .requestMatchers(publicUrls)
-                                .permitAll()
                                 .anyRequest().authenticated())
                 .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterAfter(adminKeyLoginFilter, UsernamePasswordAuthenticationFilter.class)

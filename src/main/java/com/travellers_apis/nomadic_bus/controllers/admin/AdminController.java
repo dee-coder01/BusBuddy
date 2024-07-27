@@ -7,22 +7,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.travellers_apis.nomadic_bus.models.Admin;
 import com.travellers_apis.nomadic_bus.models.AdminSession;
 import com.travellers_apis.nomadic_bus.services.AdminLoginService;
-import com.travellers_apis.nomadic_bus.services.AdminSignUpService;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/admin")
 public class AdminController {
-    final AdminSignUpService service;
     final AdminLoginService loginService;
 
     @PostMapping("/login")
@@ -39,11 +34,6 @@ public class AdminController {
         }
         loginService.logOutAdmin(key);
         return ResponseEntity.accepted().body("User logout successful.");
-    }
-
-    @PostMapping("/signup")
-    public ResponseEntity<Admin> registerAsAdmin(@Valid @RequestBody Admin admin) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.addNewAdmin(admin));
     }
 
 }
