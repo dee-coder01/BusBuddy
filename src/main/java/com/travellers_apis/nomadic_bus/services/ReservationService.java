@@ -6,7 +6,6 @@ import java.time.LocalTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.travellers_apis.nomadic_bus.commons.AdminException;
 import com.travellers_apis.nomadic_bus.commons.BusException;
 import com.travellers_apis.nomadic_bus.commons.NoSessionFoundException;
 import com.travellers_apis.nomadic_bus.commons.ReservationException;
@@ -34,8 +33,9 @@ public class ReservationService {
     @Transactional
     public ReservationResponseDTO addReservation(ReservationDTO dto, String userKey) {
         try {
-            UserSession userSession = sessionService.findSessionByUserKey(userKey);
-            User user = loginService.findUserWithUserId(userSession.getUser().getId());
+            UserSession userSession = sessionService.findSessionByUserKey(userKey).get();
+            User user = loginService.findUserWithUserId(userSession.getUser().getId())
+                    .orElseThrow(() -> new RuntimeException("Something went wrong"));
             if (!routeService.isRouteAvailable(dto.getSource(), dto.getDestination()))
                 throw new RouteException(
                         "Route is not available from " + dto.getSource() + " to " + dto.getDestination() + ".");
@@ -59,10 +59,6 @@ public class ReservationService {
 
     @Transactional
     public ReservationResponseDTO cancelReservation(ReservationDTO dto, String userKey) {
-        boolean validUserKey = sessionService.validateUserKey(userKey);
-        if (!validUserKey) {
-            throw new AdminException("User key is not valid, Please provide valid user key.");
-        }
         if (!routeService.isRouteAvailable(dto.getSource(), dto.getDestination()))
             throw new RouteException(
                     "Something went wrong, Please connect with customer support for resolution.");

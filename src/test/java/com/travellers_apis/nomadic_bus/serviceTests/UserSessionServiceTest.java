@@ -35,10 +35,10 @@ public class UserSessionServiceTest {
 
     @Test
     public void testFindSessionByUserId() {
-        when(sessionRepository.findByUserID(1L)).thenReturn(Optional.of(session));
-        when(sessionRepository.findByUserID(2L))
+        when(sessionRepository.findByUserId(1L)).thenReturn(Optional.of(session));
+        when(sessionRepository.findByUserId(2L))
                 .thenThrow(new NoSessionFoundException("Session not found for the user, Please login."));
-        UserSession session2 = sessionService.findSessionByUserId(1L);
+        UserSession session2 = sessionService.findSessionByUserId(1L).get();
         assertEquals(session.getUuid(), session2.getUuid());
         assertThrows(NoSessionFoundException.class, () -> sessionService.findSessionByUserId(2L));
     }
@@ -52,8 +52,8 @@ public class UserSessionServiceTest {
     @Test
     public void testFindSessionByUserKey() {
         when(sessionRepository.findByUuid(session.getUuid())).thenReturn(Optional.of(session));
-        UserSession session2 = sessionService.findSessionByUserKey(session.getUuid());
-        assertEquals(session.getUserID(), session2.getUserID());
+        UserSession session2 = sessionService.findSessionByUserKey(session.getUuid()).get();
+        assertEquals(session.getId(), session2.getId());
         when(sessionRepository.findByUuid("bad_user_key"))
                 .thenThrow(new NoSessionFoundException("Invalid user key."));
         assertThrows(NoSessionFoundException.class, () -> sessionService.findSessionByUserKey("bad_user_key"));
@@ -61,8 +61,8 @@ public class UserSessionServiceTest {
 
     @Test
     public void testDeleteUserSession() {
-        when(sessionRepository.deleteByUserID(session.getUserID())).thenReturn(true);
-        assertTrue(sessionService.deleteUserSession(session.getUserID()));
+        when(sessionRepository.deleteByUserId(session.getId())).thenReturn(true);
+        assertTrue(sessionService.deleteUserSession(session.getId()));
     }
 
     @Test
@@ -75,6 +75,6 @@ public class UserSessionServiceTest {
     public void testCreateNewSession() {
         when(sessionRepository.save(session)).thenReturn(session);
         UserSession session2 = sessionService.createNewSession(session);
-        assertEquals(session.getUserID(), session2.getUserID());
+        assertEquals(session.getId(), session2.getId());
     }
 }

@@ -12,13 +12,13 @@ public class SessionTestUtils {
         UserSession session = new UserSession();
         session.setTime(LocalDateTime.now());
         session.setUuid(UUID.randomUUID().toString());
-        session.setUserID(1L);
+        session.setId(1L);
         return session;
     }
 
     public static UserSession createBadSession() {
         UserSession session = createSession();
-        session.setUserID(null);
+        session.setId(null);
         return session;
     }
 }

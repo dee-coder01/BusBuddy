@@ -1,6 +1,7 @@
 package com.travellers_apis.nomadic_bus.services;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -33,7 +34,8 @@ public class UserLoginService {
     @Transactional
     public void logOutUser(String userKey) {
         try {
-            UserSession currentSession = sessionService.findSessionByUserKey(userKey);
+            UserSession currentSession = sessionService.findSessionByUserKey(userKey)
+                    .orElseThrow(() -> new NoSessionFoundException("No session found with user key " + userKey));
             sessionService.deleteUserSession(currentSession.getUser().getId());
         } catch (NoSessionFoundException e) {
             throw new UserException("Session is not found in the system.");
@@ -41,8 +43,8 @@ public class UserLoginService {
     }
 
     @Transactional(readOnly = true)
-    public User findUserWithUserName(String userName) {
-        return repository.findByEmail(userName).orElse(null);
+    public Optional<User> findUserWithUserName(String userName) {
+        return repository.findByEmail(userName);
     }
 
     @Transactional(readOnly = true)
@@ -51,8 +53,8 @@ public class UserLoginService {
     }
 
     @Transactional(readOnly = true)
-    public User findUserWithUserId(Long userId) {
-        return repository.findById(userId).orElse(null);
+    public Optional<User> findUserWithUserId(Long userId) {
+        return repository.findById(userId);
     }
 
     @Transactional(readOnly = true)

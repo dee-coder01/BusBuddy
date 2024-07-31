@@ -27,7 +27,7 @@ public class BusService {
             throw new BusException("Journey start and destination can't be same.");
         Route route = new Route(bus.getRouteFrom(), bus.getRouteTo(), bus.getRoute().getDistance());
         if (routeService.isRouteAvailable(bus.getRouteFrom(), bus.getRouteTo())) {
-            route = routeService.getRouteFromSourceToDestination(bus.getRouteFrom(), bus.getRouteTo());
+            route = routeService.getRouteFromSourceToDestination(bus.getRouteFrom(), bus.getRouteTo()).get();
         }
         routeService.addRoute(route);
         bus.setRoute(route);

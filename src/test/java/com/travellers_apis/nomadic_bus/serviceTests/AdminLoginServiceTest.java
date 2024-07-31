@@ -42,11 +42,11 @@ public class AdminLoginServiceTest {
                 .thenReturn(Optional.of(admin));
         UserSession session = new UserSession();
         session.setTime(LocalDateTime.now());
-        session.setUserID(null);
+        session.setId(null);
         when(sessionService.createNewSession(new UserSession()))
                 .thenReturn(new UserSession());
         LoginCredential loginCredential = AdminTestUtils.createAdminLoginCredential();
-        loginService.createAdminSession(loginCredential);
+        loginService.createAdminSession(loginCredential.getEmail());
     }
 
     @Test
@@ -57,7 +57,7 @@ public class AdminLoginServiceTest {
         when(adminRepository.findByEmailAndPassword("Admin@gmail.com", "Password"))
                 .thenThrow(new AdminException("Check your credential."));
         LoginCredential loginCredential = AdminTestUtils.createAdminLoginCredential();
-        Admin dbAdmin = loginService.findAdminByEmailAndPassword(loginCredential);
+        Admin dbAdmin = loginService.findAdminByEmailAndPassword(loginCredential).get();
         assertEquals(admin.getEmail(), dbAdmin.getEmail());
         LoginCredential basCredential = AdminTestUtils.createBadAdminLoginCredential();
         assertThrows(AdminException.class, () -> loginService.findAdminByEmailAndPassword(basCredential));
