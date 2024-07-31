@@ -30,7 +30,7 @@ public class UserSessionServiceTest {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-        session = SessionTestUtils.createSession();
+        session = SessionTestUtils.createUserSession();
     }
 
     @Test

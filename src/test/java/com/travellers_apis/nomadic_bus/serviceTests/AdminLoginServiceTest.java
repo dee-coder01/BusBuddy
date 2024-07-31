@@ -2,9 +2,9 @@ package com.travellers_apis.nomadic_bus.serviceTests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.when;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -15,20 +15,24 @@ import org.mockito.MockitoAnnotations;
 
 import com.travellers_apis.nomadic_bus.commons.AdminException;
 import com.travellers_apis.nomadic_bus.models.Admin;
+import com.travellers_apis.nomadic_bus.models.AdminSession;
 import com.travellers_apis.nomadic_bus.models.LoginCredential;
-import com.travellers_apis.nomadic_bus.models.UserSession;
 import com.travellers_apis.nomadic_bus.repositories.AdminRepository;
+import com.travellers_apis.nomadic_bus.repositories.AdminSessionRepository;
 import com.travellers_apis.nomadic_bus.services.AdminLoginService;
-import com.travellers_apis.nomadic_bus.services.UserSessionService;
+import com.travellers_apis.nomadic_bus.services.AdminSessionService;
 
 public class AdminLoginServiceTest {
     @InjectMocks
     private AdminLoginService loginService;
     @Mock
-    private UserSessionService sessionService;
+    private AdminSessionService sessionService;
 
     @Mock
     private AdminRepository adminRepository;
+
+    @Mock
+    private AdminSessionRepository adminSessionRepository;
 
     @BeforeEach
     public void setUp() {
@@ -38,15 +42,13 @@ public class AdminLoginServiceTest {
     @Test
     public void testCreateAdminSession() {
         Admin admin = AdminTestUtils.createAdmin();
-        when(adminRepository.findByEmailAndPassword("Admin@gmail.com", "Password@123"))
-                .thenReturn(Optional.of(admin));
-        UserSession session = new UserSession();
-        session.setTime(LocalDateTime.now());
-        session.setId(null);
-        when(sessionService.createNewSession(new UserSession()))
-                .thenReturn(new UserSession());
+        AdminSession session = SessionTestUtils.createAdminSession();
+        when(adminRepository.findByEmail(admin.getEmail())).thenReturn(Optional.of(admin));
+        when(sessionService
+                .createNewSession(argThat(adminSession -> adminSession.getAdmin().equals(admin))))
+                .thenReturn(session);
         LoginCredential loginCredential = AdminTestUtils.createAdminLoginCredential();
-        loginService.createAdminSession(loginCredential.getEmail());
+        assertEquals(loginService.createAdminSession(loginCredential.getEmail()).getUuid(), session.getUuid());
     }
 
     @Test
@@ -65,7 +67,8 @@ public class AdminLoginServiceTest {
 
     @Test
     public void testLogoutAdmin() {
-        when(sessionService.deleteUserSessionByUserKey("session_key")).thenReturn(true);
+        when(sessionService.deleteAdminSessionByAdminKey("session_key")).thenReturn(true);
+        when(adminSessionRepository.deleteByUuid("session_key")).thenReturn(true);
         loginService.logOutAdmin("session_key");
     }
 }

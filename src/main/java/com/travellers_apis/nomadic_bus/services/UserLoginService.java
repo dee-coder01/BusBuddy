@@ -23,11 +23,9 @@ public class UserLoginService {
 
     @Transactional
     public String validateUserCredential(String userName) {
-        User user = repository.findByEmail(userName).orElseThrow(() -> new UserException("Invalid login credentials."));
-        UserSession session = new UserSession();
-        session.setUser(user);
-        session.setTime(LocalDateTime.now());
-        session.setUuid(UUID.randomUUID().toString());
+        UserSession session = repository.findByEmail(userName)
+                .map(this::sessionMapper)
+                .orElseThrow(() -> new UserException("Invalid login credentials."));
         return sessionService.createNewSession(session).getUuid();
     }
 
@@ -60,5 +58,13 @@ public class UserLoginService {
     @Transactional(readOnly = true)
     public boolean userExistsWithUserId(Long userId) {
         return repository.findById(userId).isPresent();
+    }
+
+    public UserSession sessionMapper(User user) {
+        UserSession session = new UserSession();
+        session.setUser(user);
+        session.setTime(LocalDateTime.now());
+        session.setUuid(UUID.randomUUID().toString());
+        return session;
     }
 }
