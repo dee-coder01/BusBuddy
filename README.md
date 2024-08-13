@@ -14,17 +14,23 @@ BusBuddy is a Spring Boot application designed to manage and facilitate bus tran
 
 ### AdminController
 
-| Endpoint          | Method |    Description    | Access |
-| :---------------- | :----: | :---------------: | :----: |
+| Endpoint        | Method |    Description    | Access |
+| :-------------- | :----: | :---------------: | :----: |
 | `/admin/signup` |  POST  | Register as admin | Public |
-| `/admin/login` |  POST  | Register as admin | Public |
-| `/admin/logout` |  POST  | Register as admin | Public |
+| `/user/signup`  |  POST  |   User sign up    | Public |
 
-### AdminLoginController
+### AdminController
+
+| Endpoint        | Method |    Description    | Access |
+| :-------------- | :----: | :---------------: | :----: |
+| `/admin/login`  |  POST  | Register as admin | Admin  |
+| `/admin/logout` |  POST  | Register as admin | Admin  |
+
+### AdminBusController
 
 | Endpoint        | Method | Description  | Access |
 | :-------------- | :----: | :----------: | :----: |
-| `/admin/login`  |  POST  | Admin login  | Public |
+| `/admin/bus`    |  POST  | Add new bus  | Admin  |
 | `/admin/logout` |  POST  | Admin logout | Public |
 
 ### BusController
@@ -54,11 +60,10 @@ BusBuddy is a Spring Boot application designed to manage and facilitate bus tran
 
 ### UserController
 
-| Endpoint       | Method | Description  |    Access     |
-| :------------- | :----: | :----------: | :-----------: |
-| `/user/login`  |  POST  |  User login  |    Public     |
-| `/user/logout` |  GET   | User logout  | Authenticated |
-| `/user/signup` |  POST  | User sign up |    Public     |
+| Endpoint       | Method | Description |    Access     |
+| :------------- | :----: | :---------: | :-----------: |
+| `/user/login`  |  POST  | User login  |    Public     |
+| `/user/logout` |  GET   | User logout | Authenticated |
 
 # Project Structure
 

@@ -3,6 +3,7 @@ package com.travellers_apis.nomadic_bus.serviceTests;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
@@ -18,6 +19,8 @@ import com.travellers_apis.nomadic_bus.models.LoginCredential;
 import com.travellers_apis.nomadic_bus.models.User;
 import com.travellers_apis.nomadic_bus.models.UserSession;
 import com.travellers_apis.nomadic_bus.repositories.UserRepository;
+import com.travellers_apis.nomadic_bus.serviceTests.utils.SessionTestUtils;
+import com.travellers_apis.nomadic_bus.serviceTests.utils.UserTestUtils;
 import com.travellers_apis.nomadic_bus.services.UserLoginService;
 import com.travellers_apis.nomadic_bus.services.UserSessionService;
 
@@ -37,20 +40,21 @@ public class UserLoginServiceTest {
     public void setup() {
         MockitoAnnotations.openMocks(this);
         user = UserTestUtils.createUser();
-        session = SessionTestUtils.createSession();
+        session = SessionTestUtils.createUserSession();
         loginCredential = UserTestUtils.createUserLoginCredential();
+        session.setUser(user);
     }
 
     @Test
     public void testUserExistsWithUserId() {
-        when(userRepository.findById(user.getUserID())).thenReturn(Optional.of(user));
-        assertTrue(loginService.userExistsWithUserId(user.getUserID()));
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+        assertTrue(loginService.userExistsWithUserId(user.getId()));
     }
 
     @Test
     public void testFindUserWithUserId() {
-        when(userRepository.findById(user.getUserID())).thenReturn(Optional.of(user));
-        User u = loginService.findUserWithUserId(user.getUserID());
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+        User u = loginService.findUserWithUserId(user.getId()).get();
         assertEquals(u.getEmail(), user.getEmail());
     }
 
@@ -63,7 +67,7 @@ public class UserLoginServiceTest {
     @Test
     public void testFindUserWithUserName() {
         when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
-        User u = loginService.findUserWithUserName(user.getEmail());
+        User u = loginService.findUserWithUserName(user.getEmail()).get();
         assertEquals(u.getEmail(), user.getEmail());
         user = UserTestUtils.createBadUser();
         when(userRepository.findByEmail(user.getEmail()))
@@ -73,19 +77,22 @@ public class UserLoginServiceTest {
 
     @Test
     public void testLogOutUser() {
-        when(sessionService.findSessionByUserKey(session.getUuid())).thenReturn(session);
-        UserSession currentSession = sessionService.findSessionByUserKey(session.getUuid());
+        when(sessionService.findSessionByUserKey(session.getUuid())).thenReturn(Optional.of(session));
+        when(sessionService.deleteUserSession(session.getUser().getId())).thenReturn(true);
+        UserSession currentSession = sessionService.findSessionByUserKey(session.getUuid()).get();
         loginService.logOutUser(currentSession.getUuid());
     }
 
-    // @Test
-    // public void testValidateUserCredential() {
-    // when(userRepository.findByEmail(loginCredential.getEmail()))
-    // .thenReturn(Optional.of(user));
-    // assertTrue(userRepository.findByEmail(loginCredential.getEmail())
-    // .isPresent());
-    // when(sessionService.createNewSession(session)).thenReturn(SessionTestUtils.createSession());
-    // assertEquals(loginService.validateUserCredential(loginCredential.getEmail()),
-    // session.getUuid());
-    // }
+    @Test
+    public void testValidateUserCredential() {
+        when(userRepository.findByEmail(loginCredential.getEmail()))
+                .thenReturn(Optional.of(user));
+        assertTrue(userRepository.findByEmail(loginCredential.getEmail())
+                .isPresent());
+        when(sessionService.createNewSession(
+                argThat(userSession -> userSession.getUser().equals(user))))
+                .thenReturn(session);
+        assertEquals(loginService.validateUserCredential(loginCredential.getEmail()),
+                session.getUuid());
+    }
 }

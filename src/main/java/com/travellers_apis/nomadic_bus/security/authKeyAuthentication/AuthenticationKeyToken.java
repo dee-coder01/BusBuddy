@@ -6,8 +6,8 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 
 public class AuthenticationKeyToken extends AbstractAuthenticationToken {
-    Object credentials;
     Object principle;
+    Object credentials;
 
     public AuthenticationKeyToken(Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
@@ -19,13 +19,13 @@ public class AuthenticationKeyToken extends AbstractAuthenticationToken {
     }
 
     @Override
-    public Object getCredentials() {
-        return this.credentials;
+    public Object getPrincipal() {
+        return this.principle;
     }
 
     @Override
-    public Object getPrincipal() {
-        return this.principle;
+    public Object getCredentials() {
+        return this.credentials;
     }
 
 }

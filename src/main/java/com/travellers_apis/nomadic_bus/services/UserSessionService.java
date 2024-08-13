@@ -1,9 +1,10 @@
 package com.travellers_apis.nomadic_bus.services;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.travellers_apis.nomadic_bus.commons.NoSessionFoundException;
 import com.travellers_apis.nomadic_bus.models.UserSession;
 import com.travellers_apis.nomadic_bus.repositories.UserSessionRepository;
 
@@ -15,9 +16,8 @@ public class UserSessionService {
     final UserSessionRepository sessionRepository;
 
     @Transactional(readOnly = true)
-    public UserSession findSessionByUserId(Long userID) {
-        return sessionRepository.findByUserId(userID)
-                .orElseThrow(() -> new NoSessionFoundException("Session not found for the user, Please login."));
+    public Optional<UserSession> findSessionByUserId(Long userID) {
+        return sessionRepository.findByUserId(userID);
     }
 
     @Transactional(readOnly = true)
@@ -26,14 +26,13 @@ public class UserSessionService {
     }
 
     @Transactional(readOnly = true)
-    public UserSession findSessionByUserKey(String userKey) {
-        return sessionRepository.findByUuid(userKey)
-                .orElseThrow(() -> new NoSessionFoundException("Invalid user key."));
+    public Optional<UserSession> findSessionByUserKey(String userKey) {
+        return sessionRepository.findByUuid(userKey);
     }
 
     @Transactional
-    public void deleteUserSession(Long userId) {
-        sessionRepository.deleteById(userId);
+    public boolean deleteUserSession(Long userId) {
+        return sessionRepository.deleteByUserId(userId);
     }
 
     @Transactional

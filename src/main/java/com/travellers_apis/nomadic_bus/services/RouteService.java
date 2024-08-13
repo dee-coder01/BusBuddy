@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 
@@ -128,9 +129,8 @@ public class RouteService {
     }
 
     @Transactional(readOnly = true)
-    public Route getRouteFromSourceToDestination(String source, String destination) {
-        return routeRepository.findByRouteFromAndRouteTo(source, destination)
-                .orElseThrow(() -> new RouteException("Route not found."));
+    public Optional<Route> getRouteFromSourceToDestination(String source, String destination) {
+        return routeRepository.findByRouteFromAndRouteTo(source, destination);
     }
 
     @Transactional(readOnly = true)
@@ -140,14 +140,11 @@ public class RouteService {
 
     @Transactional
     public Route addRoute(Route route) {
-        // boolean isValidKey = sessionService.validateUserKey(key);
-        // if (!isValidKey)
-        // throw new AdminException(INVALID_USER_KEY);
-        try {
-            return getRouteFromSourceToDestination(route.getRouteFrom(), route.getRouteTo());
-        } catch (RouteException e) {
+        if (getRouteFromSourceToDestination(route.getRouteFrom(), route.getRouteTo()).isEmpty()) {
             route.setBusList(new ArrayList<>());
             return routeRepository.save(route);
+        } else {
+            return route;
         }
     }
 
@@ -161,16 +158,12 @@ public class RouteService {
     }
 
     @Transactional(readOnly = true)
-    public Route viewRoute(int routeId) {
-        return routeRepository.findById(routeId)
-                .orElseThrow(() -> new RouteException("There is no route present of this  routeId :" + routeId));
+    public Optional<Route> viewRoute(int routeId) {
+        return routeRepository.findById(routeId);
     }
 
     @Transactional
     public Route updateRoute(Route route, String key) {
-        boolean isValidKey = sessionService.validateUserKey(key);
-        if (isValidKey)
-            throw new AdminException(INVALID_USER_KEY);
         Route presentRoute = routeRepository.findById(route.getRouteID())
                 .orElseThrow(() -> new RouteException("Route doesn't exist of  this routeId : " + route.getRouteID()));
         List<Bus> busList = presentRoute.getBusList();

@@ -8,9 +8,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.travellers_apis.nomadic_bus.models.Admin;
 import com.travellers_apis.nomadic_bus.repositories.AdminRepository;
+import com.travellers_apis.nomadic_bus.serviceTests.utils.AdminTestUtils;
 import com.travellers_apis.nomadic_bus.services.AdminSignUpService;
 
 public class AdminSignupServiceTest {
@@ -20,6 +22,9 @@ public class AdminSignupServiceTest {
     @Mock
     private AdminRepository adminRepository;
 
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -27,8 +32,10 @@ public class AdminSignupServiceTest {
 
     @Test
     public void testAddNewAdmin() {
-        when(adminRepository.save(AdminTestUtils.createAdmin())).thenReturn(AdminTestUtils.createAdmin());
-        Admin ad = signUpService.addNewAdmin(AdminTestUtils.createAdmin());
-        assertEquals(ad.getEmail(), AdminTestUtils.createAdmin().getEmail());
+        Admin admin = AdminTestUtils.createAdmin();
+        when(adminRepository.save(admin)).thenReturn(admin);
+        when(passwordEncoder.encode(admin.getPassword()))
+                .thenReturn("encoded password");
+        assertEquals(signUpService.addNewAdmin(admin).getEmail(), admin.getEmail());
     }
 }

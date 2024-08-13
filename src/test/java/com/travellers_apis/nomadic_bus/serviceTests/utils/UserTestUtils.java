@@ -1,4 +1,4 @@
-package com.travellers_apis.nomadic_bus.serviceTests;
+package com.travellers_apis.nomadic_bus.serviceTests.utils;
 
 import com.travellers_apis.nomadic_bus.models.LoginCredential;
 import com.travellers_apis.nomadic_bus.models.User;

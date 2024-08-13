@@ -1,9 +1,10 @@
 package com.travellers_apis.nomadic_bus.services;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.travellers_apis.nomadic_bus.commons.NoSessionFoundException;
 import com.travellers_apis.nomadic_bus.models.AdminSession;
 import com.travellers_apis.nomadic_bus.repositories.AdminSessionRepository;
 
@@ -15,9 +16,8 @@ public class AdminSessionService {
     final AdminSessionRepository sessionRepository;
 
     @Transactional(readOnly = true)
-    public AdminSession findSessionByAdminId(Long adminID) {
-        return sessionRepository.findByAdminId(adminID)
-                .orElseThrow(() -> new NoSessionFoundException("Session not found for the Admin, Please login."));
+    public Optional<AdminSession> findSessionByAdminId(Long adminID) {
+        return sessionRepository.findByAdminId(adminID);
     }
 
     @Transactional(readOnly = true)
@@ -26,19 +26,18 @@ public class AdminSessionService {
     }
 
     @Transactional(readOnly = true)
-    public AdminSession findSessionByAdminKey(String adminKey) {
-        return sessionRepository.findByUuid(adminKey)
-                .orElseThrow(() -> new NoSessionFoundException("Invalid Admin key."));
+    public Optional<AdminSession> findSessionByAdminKey(String adminKey) {
+        return sessionRepository.findByUuid(adminKey);
     }
 
     @Transactional
     public boolean deleteAdminSession(Long adminId) {
-        return sessionRepository.deleteByAdminId(adminId);
+        return sessionRepository.deleteByAdminId(adminId) > 0;
     }
 
     @Transactional
     public boolean deleteAdminSessionByAdminKey(String adminKey) {
-        return sessionRepository.deleteByUuid(adminKey);
+        return (Integer) sessionRepository.deleteByUuid(adminKey) > 0;
     }
 
     @Transactional

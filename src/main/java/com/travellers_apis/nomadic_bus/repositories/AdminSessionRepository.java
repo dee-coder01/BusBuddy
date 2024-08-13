@@ -6,9 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.travellers_apis.nomadic_bus.models.AdminSession;
 
 public interface AdminSessionRepository extends JpaRepository<AdminSession, Long> {
-    boolean deleteByAdminId(Long userID);
+    Integer deleteByAdminId(Long userID);
 
-    boolean deleteByUuid(String userKey);
+    Integer deleteByUuid(String userKey);
 
     Optional<AdminSession> findByAdminId(Long userID);
 
