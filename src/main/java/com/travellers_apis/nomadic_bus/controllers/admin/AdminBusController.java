@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.travellers_apis.nomadic_bus.models.Bus;
 import com.travellers_apis.nomadic_bus.services.BusService;
@@ -24,9 +23,8 @@ public class AdminBusController {
     private BusService busService;
 
     @PostMapping("/bus")
-    public ResponseEntity<Bus> addNewBus(@Valid @RequestBody Bus bus,
-            @RequestParam(required = true, name = "key") String adminKey) {
-        busService.addNewBus(bus, adminKey);
+    public ResponseEntity<Bus> addNewBus(@Valid @RequestBody Bus bus) {
+        busService.addNewBus(bus);
         return ResponseEntity.accepted().body(bus);
     }
 

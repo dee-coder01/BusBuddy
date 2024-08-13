@@ -1,4 +1,4 @@
-package com.travellers_apis.nomadic_bus.serviceTests;
+package com.travellers_apis.nomadic_bus.serviceTests.utils;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

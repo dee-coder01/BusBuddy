@@ -3,6 +3,7 @@ package com.travellers_apis.nomadic_bus.services;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,9 +34,10 @@ public class ReservationService {
     @Transactional
     public ReservationResponseDTO addReservation(ReservationDTO dto, String userKey) {
         try {
-            UserSession userSession = sessionService.findSessionByUserKey(userKey).get();
-            User user = loginService.findUserWithUserId(userSession.getUser().getId())
-                    .orElseThrow(() -> new RuntimeException("Something went wrong"));
+            UserSession userSession = (UserSession) SecurityContextHolder.getContext().getAuthentication();
+            // sessionService.findSessionByUserKey(userKey).get();
+
+            User user = userSession.getUser();
             if (!routeService.isRouteAvailable(dto.getSource(), dto.getDestination()))
                 throw new RouteException(
                         "Route is not available from " + dto.getSource() + " to " + dto.getDestination() + ".");

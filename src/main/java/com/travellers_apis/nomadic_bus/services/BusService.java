@@ -22,14 +22,15 @@ public class BusService {
     final RouteService routeService;
 
     @Transactional
-    public Bus addNewBus(Bus bus, String adminKey) {
+    public Bus addNewBus(Bus bus) {
         if (bus.getRouteFrom().equals(bus.getRouteTo()))
             throw new BusException("Journey start and destination can't be same.");
         Route route = new Route(bus.getRouteFrom(), bus.getRouteTo(), bus.getRoute().getDistance());
         if (routeService.isRouteAvailable(bus.getRouteFrom(), bus.getRouteTo())) {
             route = routeService.getRouteFromSourceToDestination(bus.getRouteFrom(), bus.getRouteTo()).get();
+        } else {
+            routeService.addRoute(route);
         }
-        routeService.addRoute(route);
         bus.setRoute(route);
         route.getBusList().add(bus);
         busRepository.save(bus);
@@ -38,9 +39,8 @@ public class BusService {
 
     @Transactional
     public Bus updateBusInfo(Bus bus) {
-        if (!(busRepository.findById(bus.getBusId()).isPresent())) {
-            throw new BusException("Bus not found in the system.");
-        }
+        busRepository.findById(bus.getBusId())
+                .orElseThrow(() -> new BusException("Bus not found in the system."));
         Route route = routeService.addRoute(bus.getRoute());
         bus.setRoute(route);
         return busRepository.save(bus);
@@ -50,8 +50,9 @@ public class BusService {
     public Bus deleteBusInfo(Integer busId) {
         Bus existingBus = busRepository.findById(busId)
                 .orElseThrow(() -> new BusException("Bus not found with busId: " + busId));
+        // Scheduled buses with booked seats can't be deleted.
         if (LocalDate.now().isBefore(existingBus.getBusJourneyDate())
-                && existingBus.getAvailableSeats().equals(existingBus.getSeats())) {
+                && !existingBus.getAvailableSeats().equals(existingBus.getSeats())) {
             throw new BusException("Can't delete scheduled and reserved bus.");
         }
         busRepository.delete(existingBus);

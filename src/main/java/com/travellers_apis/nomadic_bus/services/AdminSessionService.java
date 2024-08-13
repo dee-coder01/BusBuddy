@@ -32,12 +32,12 @@ public class AdminSessionService {
 
     @Transactional
     public boolean deleteAdminSession(Long adminId) {
-        return sessionRepository.deleteByAdminId(adminId);
+        return sessionRepository.deleteByAdminId(adminId) > 0;
     }
 
     @Transactional
     public boolean deleteAdminSessionByAdminKey(String adminKey) {
-        return sessionRepository.deleteByUuid(adminKey);
+        return (Integer) sessionRepository.deleteByUuid(adminKey) > 0;
     }
 
     @Transactional

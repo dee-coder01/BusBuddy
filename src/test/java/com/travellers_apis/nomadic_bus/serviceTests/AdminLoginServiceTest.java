@@ -19,6 +19,8 @@ import com.travellers_apis.nomadic_bus.models.AdminSession;
 import com.travellers_apis.nomadic_bus.models.LoginCredential;
 import com.travellers_apis.nomadic_bus.repositories.AdminRepository;
 import com.travellers_apis.nomadic_bus.repositories.AdminSessionRepository;
+import com.travellers_apis.nomadic_bus.serviceTests.utils.AdminTestUtils;
+import com.travellers_apis.nomadic_bus.serviceTests.utils.SessionTestUtils;
 import com.travellers_apis.nomadic_bus.services.AdminLoginService;
 import com.travellers_apis.nomadic_bus.services.AdminSessionService;
 
@@ -68,7 +70,7 @@ public class AdminLoginServiceTest {
     @Test
     public void testLogoutAdmin() {
         when(sessionService.deleteAdminSessionByAdminKey("session_key")).thenReturn(true);
-        when(adminSessionRepository.deleteByUuid("session_key")).thenReturn(true);
+        when(adminSessionRepository.deleteByUuid("session_key")).thenReturn(1);
         loginService.logOutAdmin("session_key");
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.travellers_apis.nomadic_bus.models.Admin;
 import com.travellers_apis.nomadic_bus.repositories.AdminRepository;
+import com.travellers_apis.nomadic_bus.serviceTests.utils.AdminTestUtils;
 import com.travellers_apis.nomadic_bus.services.AdminSignUpService;
 
 public class AdminSignupServiceTest {

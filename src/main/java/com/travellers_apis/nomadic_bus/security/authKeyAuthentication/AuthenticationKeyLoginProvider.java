@@ -23,14 +23,14 @@ public class AuthenticationKeyLoginProvider implements AuthenticationProvider {
             AdminSessionService adminSessionService = (AdminSessionService) sessionService;
             return adminSessionService
                     .findSessionByAdminKey((String) authentication.getPrincipal())
-                    .map(session -> new AuthenticationKeyToken(session.getUuid(),
+                    .map(session -> new AuthenticationKeyToken(session,
                             List.of(new SimpleGrantedAuthority(UserRoles.ADMIN.toString()))))
                     .get();
         } else if (sessionService instanceof UserSessionService) {
             UserSessionService userSessionService = (UserSessionService) sessionService;
             return userSessionService
                     .findSessionByUserKey((String) authentication.getPrincipal())
-                    .map(session -> new AuthenticationKeyToken(session.getUuid(),
+                    .map(session -> new AuthenticationKeyToken(session,
                             List.of(new SimpleGrantedAuthority(UserRoles.USER.toString()))))
                     .get();
         } else {

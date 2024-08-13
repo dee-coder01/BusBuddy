@@ -16,6 +16,7 @@ import org.mockito.MockitoAnnotations;
 import com.travellers_apis.nomadic_bus.commons.NoSessionFoundException;
 import com.travellers_apis.nomadic_bus.models.UserSession;
 import com.travellers_apis.nomadic_bus.repositories.UserSessionRepository;
+import com.travellers_apis.nomadic_bus.serviceTests.utils.SessionTestUtils;
 import com.travellers_apis.nomadic_bus.services.UserSessionService;
 
 public class UserSessionServiceTest {

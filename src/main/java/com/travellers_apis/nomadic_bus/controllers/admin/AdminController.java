@@ -21,18 +21,18 @@ public class AdminController {
     final AdminLoginService loginService;
 
     @PostMapping("/login")
-    public ResponseEntity<AdminSession> getMethodName() {
+    public ResponseEntity<AdminSession> adminLogin() {
         String userName = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         AdminSession session = loginService.createAdminSession(userName);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(session);
+        return ResponseEntity.status(HttpStatus.CREATED).body(session);
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logOutAdminEntity(@RequestParam(name = "key") String key) {
-        if (key == null) {
-            return ResponseEntity.ok().body("User is not logged in.");
-        }
-        loginService.logOutAdmin(key);
+    public ResponseEntity<String> logOutAdminEntity() {
+        System.out.println("Got request in logout controller");
+        AdminSession adminSession = (AdminSession) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        loginService.logOutAdmin(adminSession.getUuid());
         return ResponseEntity.accepted().body("User logout successful.");
     }
 
